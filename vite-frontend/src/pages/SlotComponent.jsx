@@ -28,6 +28,10 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
   const [modalContent, setModalContent] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
+
+  // console.log( `Slots = ${JSON.stringify(slots)} selectedSlots = ${JSON.stringify(selectedSlots)} \
+  // trayId = ${trayId} rowIndex ${rowIndex} colIndex ${colIndex}`)
+
   useEffect(() => {
     // Find the slot corresponding to the given row and column indices
     const foundSlot = Array.isArray(slots) && slots.find(slot =>
@@ -51,65 +55,65 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
       console.error('Error fetching seed data:', error);
     }
   };
-  const handleSelectSeed = (selectedSeed) => {
-    // Update the slot with the selected seed _id
-    const updatedSlot = { ...slot, seed: selectedSeed._id, used: true, startDate: new Date() };
-    const updatedSlots = slots.map(slot => {
-      // Check if the current slot is the one being modified
-      if (slot._id === updatedSlot._id) {
-        // Replace the slot with the updatedSlot
-        return updatedSlot;
+
+
+
+
+  const handleSelectSeed = async (selectedSeed) => {
+
+    let updateSeedQuantity = false;
+
+    if ((selectedSlots.length >= 1) && !(selectedSlots.includes(slot._id))) {
+      enqueueSnackbar("Cancel selection first !", { Variant: "Error" });
+      return;
+    }
+    if (selectedSlots.length === 0)
+      selectedSlots.push(slot._id);
+
+    const updatedSlots = slots.map(item => {
+      if (selectedSlots.includes(item._id)) {
+        return { ...item, seed: selectedSeed._id, used: true, startDate: new Date() };
       } else {
-        // If not the modified slot, return the original slot
-        return slot;
+        return item;
       }
     });
+
+    selectedSlots.forEach(async (id) => {
+      let updatedSlot = updatedSlots.find(item => item._id === id);
+      await axios.put(`${BackendURL}/slots/${id}`, updatedSlot);
+      // console.log( `Pushed id ${id} to backend updated slot = ${JSON.stringify(updatedSlot)}`);
+
+    });
+
     // Decrease the seed quantity
-    const updatedSeeds = seeds.map(seed => {
-      if (seed._id === selectedSeed._id) {
-        if (seed.quantity !== null && seed.quantity !== undefined)
-          return { ...seed, quantity: seed.quantity - 1 };
-      }
-      return seed;
-    });
-    var updateSeedQuantity = false;
-    // Perform API calls to update the slot and seed quantities
-    axios.put(`${BackendURL}/slots/${updatedSlot._id}`, updatedSlot)
-      .then(response => {
-        try {
-          if (selectedSeed.quantity !== null && selectedSeed.quantity !== undefined) {
-            selectedSeed.quantity = selectedSeed.quantity - 1;
-            updateSeedQuantity = true;
-          }
-          else
-            updateSeedQuantity = false;
-        } catch (error) {
-
-          console.log(`seed ${JSON.stringify(selectedSeed)} has undefined quantity !`);
-        }
-
-        if (updateSeedQuantity) {
-          axios
-            .put(`${BackendURL}/seeds/${selectedSeed._id}`, selectedSeed)
-            .then((response) => {
-              enqueueSnackbar("Seed Quantity Updated!", { variant: 'success' });
-            })
-            .catch((error => {
-              enqueueSnackbar("Something wrong happened while updating the seed quantity!", { variant: 'error' });
-            }));
-        }
-      })
-      .catch(error => {
-        // Handle error while updating slot
-        enqueueSnackbar("Something wrong happened while updating the slot!", { variant: 'error' });
-        console.error('Error updating slot:', error);
+    if (selectedSeed.quantity !== null && selectedSeed.quantity !== undefined) {
+      updateSeedQuantity = true;
+      selectedSeed.quantity = selectedSeed.quantity - selectedSlots.length;
+    }
+      const updatedSeeds = seeds.map(seed => {
+        if (seed._id === selectedSeed._id) 
+            return selectedSeed;
+        return seed;
       });
+    
+    if (updateSeedQuantity) {
+      axios
+        .put(`${BackendURL}/seeds/${selectedSeed._id}`, selectedSeed)
+        .then((response) => {
+          enqueueSnackbar("Seed Quantity Updated!", { variant: 'success' });
+        })
+        .catch((error => {
+          enqueueSnackbar("Something wrong happened while updating the seed quantity!", { variant: 'error' });
+        }));
+    }
+
+
     const observationData = {
       date: new Date(),
       trays: [trayId], // Example tray IDs
-      slots: [updatedSlot._id], // Example slot IDs
+      slots: selectedSlots, // Example slot IDs
       photos: [], // Example photo IDs
-      text: `A new Seed is added id ${selectedSeed._id} ${selectedSeed.propId}`,
+      text: `${selectedSeed.propId} ${selectedSeed._id} added to ${JSON.stringify(selectedSlots)}`,
       keywords: [], // Example keyword IDs
       mood: [], // Example mood IDs
     };
@@ -128,22 +132,23 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
   };
 
 
-  const handleDeleteSlot = async (trayid, slotid) => {
+  const DeleteSlots = async (trayid, selectedSlots) => {
+    // console.log(`selectedSlots to delete = ${JSON.stringify(selectedSlots)}`);
     try {
-      setLoading(true);
-      const response = await axios.delete(`${BackendURL}/slots/${slotid}`);
-      // enqueueSnackbar("Slot deleted!", { variant: 'success' });
-      const updatedSlots = slots.filter(s => s._id !== slot._id);
+      selectedSlots.forEach(async element => {
+        const response = await axios.delete(`${BackendURL}/slots/${element}`);
+      });
+      // console.log(`Slots = ${JSON.stringify(slots)}`);
+      const updatedSlots = slots.filter(s => !selectedSlots.includes(s._id));
+      // console.log(`Updated Slots = ${JSON.stringify(updatedSlots)}`);
       slots = updatedSlots;
       const updatedTray = await axios.patch(`${BackendURL}/trays/${trayid}`, { slots: updatedSlots });
-      enqueueSnackbar("Tray updated!", { variant: 'success' });
       onTrayUpdate(updatedTray.data, updatedSlots);
       setLoading(false);
     } catch (error) {
       setLoading(false);
       enqueueSnackbar("Something went wrong, please check console !", { variant: 'error' });
     }
-    //Update Tray now const rsp = 
   }
 
 
@@ -193,13 +198,31 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
     setModalContent(content);
   }
 
- 
+  const HandleDeleteManySlots = () => {
+    if ((selectedSlots.length >= 1) && !(selectedSlots.includes(slot._id))) {
+      enqueueSnackbar(`Cancel selection first`, { variant: 'error' });
+      return;
+    }
+    if (selectedSlots.length == 0)
+      selectedSlots.push(slot._id);
+
+    showModalContent(
+      <RequestConfirmationForm
+        onConfirm={() => DeleteSlots(trayId, selectedSlots)}
+        onCancel={() => setShowModal(false)}
+        question={selectedSlots && selectedSlots?.length > 1
+          ? 'Are you sure you want to remove all the selected slots ?'
+          : 'Are you sure you want to remove the slot ?'}
+      />);
+
+  }
+
   const HandleDeleteManyPlants = () => {
     if ((selectedSlots.length >= 1) && !(selectedSlots.includes(slot._id))) {
       enqueueSnackbar(`Cancel selection first`, { variant: 'error' });
       return;
     }
-    if( selectedSlots.length == 0)
+    if (selectedSlots.length == 0)
       selectedSlots.push(slot._id);
     showModalContent(<RequestConfirmationForm
       onConfirm={() => RemoveDeadSeed(selectedSlots, onTrayUpdate)}
@@ -244,16 +267,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
               <GiPlantSeed size={seedIconSize} onClick={() => { showModalContent(<SeedSelectionForm seeds={seeds} onSelectSeed={handleSelectSeed} onClose={() => { setShowModal(false) }} />); }} />
             </div>
             <div title="Delete Slot">
-              <RiDeleteBin5Fill size={seedIconSize} onClick={() => {
-                showModalContent(
-                  <RequestConfirmationForm
-                    onConfirm={() => handleDeleteSlot(trayId, slot?._id)}
-                    onCancel={() => setShowModal(false)}
-                    question={selectedSlots && selectedSlots?.length > 1
-                      ? 'Are you sure you want to remove all the selected slots?'
-                      : 'Are you sure you want to remove the slot?'}
-                  />);
-              }} />
+              <RiDeleteBin5Fill size={seedIconSize} onClick={HandleDeleteManySlots} />
             </div>
           </div>
         )

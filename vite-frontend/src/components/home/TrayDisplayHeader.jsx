@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TrayDisplayHeader = (tray) => {
+const TrayDisplayHeader = ({tray}) => {
   return (
     <div><h2 style={{ textAlign: 'center' }}>Tray Details</h2>
     <div style={{ margin: '20px', padding: '20px', border: '2px solid #ccc', borderRadius: '10px', backgroundColor: '#f9f9f9' }}>
