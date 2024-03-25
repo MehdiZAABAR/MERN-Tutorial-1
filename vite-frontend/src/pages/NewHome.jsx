@@ -22,6 +22,84 @@ const Home = () => {
     const [modalContent, setModalContent] = useState('');
     const dataSources = [
         {
+            title: 'Trays',
+            schema: Schemas.TraysSchema,
+            data: useDataFetching('Trays'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => (
+                <>
+                    <th className='border border-slate-600 rounded-md'>ID</th>
+                    <th className='border border-slate-600 rounded-md'>Used</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Name</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Slot Size</th>
+                    <th className='border border-slate-600 rounded-md '>Nb of Row</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Nb of Cols</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Slots</th>
+                    <th className='border border-slate-600 rounded-md '>Operations</th>
+                </>
+            ),
+            renderItem: (tray) => (
+                < >
+                    <td className='border border-slate-700 rounded-md text-center'> {tray.propId}</td>
+                    <td className='border border-slate-700 rounded-md text-center'> {tray.used ? ("Used") : ("Free")}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{tray.easyName}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{tray.slotSize}</td>
+                    <td className='border border-slate-700 rounded-md text-center '>{tray.nbRows}</td>
+                    <td className='border border-slate-700 rounded-md text-center '>{tray.nbCols}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>
+                        {tray.slots.length === tray.nbRows * tray.nbCols ? (
+                            <div className='flex justify-center gap-x-4 '>
+                                <Link to={`/trays/details/${tray._id}`}>
+                                    <MdOutlinePreview className='text-2xl text-green-800' />
+                                </Link>
+                                <Link to={`/trays/edit/${tray._id}`}>
+                                    <AiOutlineEdit className='text-2xl text-yellow-600' />
+                                </Link>
+                                <Link to={`/trays/delete/${tray._id}`}>
+                                    <MdOutlineDelete className='text-2xl text-red-600' />
+                                </Link>
+                                <Link to={`/trays/picture/${tray._id}`}>
+                                    <AiFillCamera className='text-2xl text-red-600' />
+                                </Link>
+                            </div>) : (<CreateTraysSlots tray={tray} />)
+                        }
+                    </td>
+                    <td className='border border-slate-700 rounded-md text-center '>
+                        <div className='flex justify-center gap-x-4 '>
+                            <Link to={`/trays/details/${tray._id}`}>
+                                <BsInfoCircle className='text-2xl text-green-800' />
+                            </Link>
+                            <Link to={`/trays/edit/${tray._id}`}>
+                                <AiOutlineEdit className='text-2xl text-yellow-600' />
+                            </Link>
+                            <Link to={`/trays/delete/${tray._id}`}>
+                                <MdOutlineDelete className='text-2xl text-red-600' />
+                            </Link>
+                            <Link to={`/trays/picture/${tray._id}`}>
+                                <AiFillCamera className='text-2xl text-red-600' />
+                            </Link>
+                        </div>
+                    </td>
+                </>
+            )
+        },
+        {
+            title: 'Keywords',
+            schema: Schemas.KeywordSchema,
+            data: useDataFetching('Keywords'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => ((
+                <>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('text')}>Text</th>
+                </>
+            )),
+            renderItem: (item, dataSource) => (
+                <>
+                    <td className="border border-slate-600 rounded-md"  >{item.text}</td>
+                </>
+            )
+        },
+        {
             title: 'Moods',
             schema: Schemas.MoodSchema,
             data: useDataFetching('Moods'),
@@ -107,68 +185,7 @@ const Home = () => {
                 </>
             )
         },
-        {
-            title: 'Trays',
-            schema: Schemas.TraysSchema,
-            data: useDataFetching('Trays'),
-            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
-            renderHeader: (handleSort) => (
-                <>
-                    <th className='border border-slate-600 rounded-md'>ID</th>
-                    <th className='border border-slate-600 rounded-md'>Used</th>
-                    <th className='border border-slate-600 rounded-md max-md:hidden'>Name</th>
-                    <th className='border border-slate-600 rounded-md max-md:hidden'>Slot Size</th>
-                    <th className='border border-slate-600 rounded-md '>Nb of Row</th>
-                    <th className='border border-slate-600 rounded-md max-md:hidden'>Nb of Cols</th>
-                    <th className='border border-slate-600 rounded-md max-md:hidden'>Slots</th>
-                    <th className='border border-slate-600 rounded-md '>Operations</th>
-                </>
-            ),
-            renderItem: (tray) => (
-                < >
-                    <td className='border border-slate-700 rounded-md text-center'> {tray.propId}</td>
-                    <td className='border border-slate-700 rounded-md text-center'> {tray.used ? ("Used") : ("Free")}</td>
-                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{tray.easyName}</td>
-                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{tray.slotSize}</td>
-                    <td className='border border-slate-700 rounded-md text-center '>{tray.nbRows}</td>
-                    <td className='border border-slate-700 rounded-md text-center '>{tray.nbCols}</td>
-                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>
-                        {tray.slots.length === tray.nbRows * tray.nbCols ? (
-                            <div className='flex justify-center gap-x-4 '>
-                                <Link to={`/trays/details/${tray._id}`}>
-                                    <MdOutlinePreview className='text-2xl text-green-800' />
-                                </Link>
-                                <Link to={`/trays/edit/${tray._id}`}>
-                                    <AiOutlineEdit className='text-2xl text-yellow-600' />
-                                </Link>
-                                <Link to={`/trays/delete/${tray._id}`}>
-                                    <MdOutlineDelete className='text-2xl text-red-600' />
-                                </Link>
-                                <Link to={`/trays/picture/${tray._id}`}>
-                                    <AiFillCamera className='text-2xl text-red-600' />
-                                </Link>
-                            </div>) : (<CreateTraysSlots tray={tray} />)
-                        }
-                    </td>
-                    <td className='border border-slate-700 rounded-md text-center '>
-                        <div className='flex justify-center gap-x-4 '>
-                            <Link to={`/trays/details/${tray._id}`}>
-                                <BsInfoCircle className='text-2xl text-green-800' />
-                            </Link>
-                            <Link to={`/trays/edit/${tray._id}`}>
-                                <AiOutlineEdit className='text-2xl text-yellow-600' />
-                            </Link>
-                            <Link to={`/trays/delete/${tray._id}`}>
-                                <MdOutlineDelete className='text-2xl text-red-600' />
-                            </Link>
-                            <Link to={`/trays/picture/${tray._id}`}>
-                                <AiFillCamera className='text-2xl text-red-600' />
-                            </Link>
-                        </div>
-                    </td>
-                </>
-            )
-        },
+       
         {
             title: 'Slots',
             schema: Schemas.SlotSchema,
@@ -213,14 +230,6 @@ const Home = () => {
     return (
         <div>
             <div className='p-4'>
-                <Link to={`/Moods/create`}>
-                    <TfiCommentsSmiley className='text-sky-600 text-4xl' /> <span>Create Mood</span>
-                </Link>
-                <Link to={`/Keywords/create`}>
-                    <PiPianoKeysFill className='text-blue-600 text-4xl' /><span>Create Keyword</span>
-                </Link>
-            </div>
-            <div className='p-4'>
                 {dataSources.map(element => (
                     <React.Fragment key={element.title}>
                         <div>
@@ -229,7 +238,7 @@ const Home = () => {
                                     onEditClick={(item) => () => element.onEditClick(item, element)}
                                     key={element.title}
                                     title={element.title}
-                                    data={element.data.data}
+                                    dataLoader={element.data}
                                     loading={element.data.loading}
                                     renderHeader={element.renderHeader}
                                     renderItem={(item) => element.renderItem(item, element)}

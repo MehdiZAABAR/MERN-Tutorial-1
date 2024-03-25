@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import RadioButton from '../components/utils/RadioButton';
 
 const SeedSelectionForm = ({ seeds, onSelectSeed, onClose }) => {
     const [selectedSeed, setSelectedSeed] = useState(null);
@@ -22,7 +23,6 @@ const SeedSelectionForm = ({ seeds, onSelectSeed, onClose }) => {
             onClose();
         }
     };
-
     return (
         <div >
             <h3 className='text-lg font-bold mb-4'>Select Seed</h3>
@@ -45,13 +45,13 @@ const SeedSelectionForm = ({ seeds, onSelectSeed, onClose }) => {
                                 <td className="border border-gray-300 px-4 py-2">{seed.propId}</td>
                                 <td className="border border-gray-300 px-4 py-2">{seed.culturePeriods.germination.start}</td>
                                 <td className="border border-gray-300 px-4 py-2 flex items-center justify-center">
-                                    {/* Custom-styled radio button */}
-                                    <label className="inline-flex items-center cursor-pointer">
-                                        <input type="radio" className="hidden" name="seed" onChange={() => handleRadioChange(seed)} checked={selectedSeed ? selectedSeed._id === seed._id : false} />
-                                        <span className={`relative block w-6 h-6 border border-gray-300 rounded-full shadow-md ${selectedSeed && selectedSeed._id === seed._id ? 'bg-blue-500 border-blue-500' : 'bg-white'}`}>
-                                            <span className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full transition-transform duration-300 scale-0 ${selectedSeed && selectedSeed._id === seed._id ? 'scale-100' : ''}`}></span>
-                                        </span>
-                                    </label>
+                                <RadioButton
+                                highlightColor='blue-500'
+                                name="seed"
+                                item={seed}
+                                checked={selectedSeed?._id === seed._id}
+                                onChange={() => setSelectedSeed(seed)}
+                                />
                                 </td>
                             </tr>
                         ))}

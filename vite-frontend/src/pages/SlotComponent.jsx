@@ -19,7 +19,7 @@ import AddObservationForm from './AddObservationForm.jsx';
 import TransferForm from './TransferForm.jsx';
 import ModalForm from './ModalForm.jsx';
 import RequestConfirmationForm from './RequestConfirmationForm.jsx';
-const SlotComponent = ({ slots, trayId, rowIndex, colIndex, seeds, onTrayUpdate }) => {
+const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds, onTrayUpdate }) => {
   const [seed, setSeed] = useState(null);
   const [slot, setSlot] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -127,22 +127,23 @@ const SlotComponent = ({ slots, trayId, rowIndex, colIndex, seeds, onTrayUpdate 
     borderRadius: '5px',
   };
 
+
   const handleDeleteSlot = async (trayid, slotid) => {
-          try {
-        setLoading(true);
-        const response = await axios.delete(`${BackendURL}/slots/${slotid}`);
-        // enqueueSnackbar("Slot deleted!", { variant: 'success' });
-        const updatedSlots = slots.filter(s => s._id !== slot._id);
-        slots = updatedSlots;
-        const updatedTray = await axios.patch(`${BackendURL}/trays/${trayid}`, { slots: updatedSlots });
-        enqueueSnackbar("Tray updated!", { variant: 'success' });
-        onTrayUpdate(updatedTray.data, updatedSlots);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        enqueueSnackbar("Something went wrong, please check console !", { variant: 'error' });
-      }
-      //Update Tray now const rsp = 
+    try {
+      setLoading(true);
+      const response = await axios.delete(`${BackendURL}/slots/${slotid}`);
+      // enqueueSnackbar("Slot deleted!", { variant: 'success' });
+      const updatedSlots = slots.filter(s => s._id !== slot._id);
+      slots = updatedSlots;
+      const updatedTray = await axios.patch(`${BackendURL}/trays/${trayid}`, { slots: updatedSlots });
+      enqueueSnackbar("Tray updated!", { variant: 'success' });
+      onTrayUpdate(updatedTray.data, updatedSlots);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      enqueueSnackbar("Something went wrong, please check console !", { variant: 'error' });
+    }
+    //Update Tray now const rsp = 
   }
 
 
@@ -152,38 +153,63 @@ const SlotComponent = ({ slots, trayId, rowIndex, colIndex, seeds, onTrayUpdate 
     slots.push(newSlot);
     onTrayUpdate(updatedTray, slots);
   }
-  const handleRemoveDeadSeed = async (trayId, slot, seedId) => {
-      const updatedSlot = { ...slot, seed: null, used: false, startDate: null };
-      const updatedSlots = slots.map(slot => {
-        // Check if the current slot is the one being modified
-        if (slot._id === updatedSlot._id) {
-          // Replace the slot with the updatedSlot
-          return updatedSlot;
-        } else {
-          // If not the modified slot, return the original slot
-          return slot;
-        }
-      });
-      await PutToDataBase(`${BackendURL}/slots/${updatedSlot._id}`, updatedSlot);
-      const observationData = {
-        date: new Date(),
-        trays: [trayId], // Example tray IDs
-        slots: [updatedSlot._id], // Example slot IDs
-        photos: [], // Example photo IDs
-        text: 'User Removed the plant from the slot! dead ?',
-        keywords: [], // Example keyword IDs
-        mood: [], // Example mood IDs
-      };
-      PostToDataBase(`${BackendURL}/observations`, observationData);
-      onTrayUpdate('', updatedSlots);
+
+
+
+
+  const RemoveDeadSeed = async (selectedSlots, onTrayUpdate) => {
+    const trayId = slot.trayId;
+
+    const updatedSlots = slots.map(item => {
+      if ((selectedSlots.includes(item._id)) && (item.seed != null)) {
+        const updatedSlot = { ...item, seed: null, used: false, startDate: null };
+        PutToDataBase(`${BackendURL}/slots/${updatedSlot._id}`, updatedSlot);
+        return updatedSlot;
+      } else {
+        return item;
+      }
+    });
+
+    // const observationData = {
+    //   date: new Date(),
+    //   trays: [trayId], // Example tray IDs
+    //   slots: selectedSlots, // Example slot IDs
+    //   photos: [], // Example photo IDs
+    //   text: selectedSlots.length > 1
+    //     ? 'User removed plants from selected slots. Are they dead?'
+    //     : 'User removed the plant from the slot. Is it dead?',
+    //   keywords: [], // Example keyword IDs
+    //   mood: [], // Example mood IDs
+    // };
+
+    // PostToDataBase(`${BackendURL}/observations`, observationData);
+    onTrayUpdate('', updatedSlots);
   };
 
- // 
+  // 
 
   const showModalContent = (content) => {
     setShowModal(true);
     setModalContent(content);
   }
+
+ 
+  const HandleDeleteManyPlants = () => {
+    if ((selectedSlots.length >= 1) && !(selectedSlots.includes(slot._id))) {
+      enqueueSnackbar(`Cancel selection first`, { variant: 'error' });
+      return;
+    }
+    if( selectedSlots.length == 0)
+      selectedSlots.push(slot._id);
+    showModalContent(<RequestConfirmationForm
+      onConfirm={() => RemoveDeadSeed(selectedSlots, onTrayUpdate)}
+      onCancel={() => setShowModal(false)}
+      question={selectedSlots && selectedSlots?.length > 1
+        ? `Are you sure you want to remove the plants from all selected slots ?`
+        : 'Are you sure you want to remove the plants from this slot ?'}
+    />);
+  }
+
   return (
     <div style={cellStyle}>
       {slot ? (
@@ -202,11 +228,7 @@ const SlotComponent = ({ slots, trayId, rowIndex, colIndex, seeds, onTrayUpdate 
             </div>
             <div className='flex flex-row justify-center gap-x-4 gap-y-4'>
               <div title="Remove Dead Seed">
-                <AiOutlineDelete className='text-2xl text-black hover:text-red-400' onClick={() => { showModalContent(<RequestConfirmationForm
-          onConfirm={() => handleRemoveDeadSeed(trayId, slot, seed?._id)}
-          onCancel={() => setShowModal(false)}
-          question={'Are you sure you want to remove the plant from the slot?'}
-        />); }} />
+                <AiOutlineDelete className='text-2xl text-black hover:text-red-400' onClick={HandleDeleteManyPlants} />
               </div>
               <div title="Transfer Slot">
                 <TbTransferOut className='text-2xl text-black hover:text-green-600' onClick={() => { showModalContent(<TransferForm slot={slot} seed={seed} />); }} />
@@ -219,14 +241,19 @@ const SlotComponent = ({ slots, trayId, rowIndex, colIndex, seeds, onTrayUpdate 
         ) : (
           <div style={{ display: 'inline-flex', alignItems: 'center' }}>
             <div title="Seed It">
-              <GiPlantSeed size={seedIconSize}  onClick={() => { showModalContent(<SeedSelectionForm seeds={seeds} onSelectSeed={handleSelectSeed} onClose={() => { setShowModal(false) }}/>); }} />
+              <GiPlantSeed size={seedIconSize} onClick={() => { showModalContent(<SeedSelectionForm seeds={seeds} onSelectSeed={handleSelectSeed} onClose={() => { setShowModal(false) }} />); }} />
             </div>
             <div title="Delete Slot">
-              <RiDeleteBin5Fill size={seedIconSize} onClick={() => { showModalContent(<RequestConfirmationForm
-          onConfirm={() => handleDeleteSlot(trayId, slot?._id)}
-          onCancel={() => setShowModal(false)}
-          question={'Are you sure you want to remove the slot?'}
-        />); }} />
+              <RiDeleteBin5Fill size={seedIconSize} onClick={() => {
+                showModalContent(
+                  <RequestConfirmationForm
+                    onConfirm={() => handleDeleteSlot(trayId, slot?._id)}
+                    onCancel={() => setShowModal(false)}
+                    question={selectedSlots && selectedSlots?.length > 1
+                      ? 'Are you sure you want to remove all the selected slots?'
+                      : 'Are you sure you want to remove the slot?'}
+                  />);
+              }} />
             </div>
           </div>
         )

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { MdCheckBox } from 'react-icons/md';
+import BackendURL from '../BackendURL'
 
 const CreateKeyword = () => {
   const [text, setText] = useState('');

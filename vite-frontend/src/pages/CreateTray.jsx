@@ -12,10 +12,12 @@ const CreateTray = () => {
   const [nbRows, setNbRows] = useState(1);
   const [nbCols, setNbCols] = useState(1);
   const [easyName, setEasyName] = useState('');
+  const [type, setType] = useState('Soil');
   const [slotSize, setSlotSize] = useState('small');
   const [slots, setSlots] = useState(['']);
   const [used, setUsed] = useState(false);
   const [photo, setPhoto] = useState('');
+  const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [createSlots, setCreate] = useState(true);
   const navigate = useNavigate();
@@ -24,12 +26,14 @@ const CreateTray = () => {
     const data = {
       propId,
       easyName,
+      type,
       slotSize,
       nbRows,
       nbCols,
       slots,
       used,
       photo,
+      description,
       createSlots
     };
     setLoading(true);
@@ -71,6 +75,14 @@ const CreateTray = () => {
             className='border-2 border-gray-500 px-4 py-2 w-full' />
         </div>
         <div className='my-4'>
+        <label className='text-xl mr-4 text-gray-500'>Type : Hydro Or Soil</label>
+        <input
+            type='text'
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className='border-2 border-gray-500 px-4 py-2 w-full' />
+        </div>
+        <div className='my-4'>
           <label className='text-xl mr-4 text-gray-500'>slotSize</label>
           <select id="slotSizes" value={slotSize} className='border-2 border-gray-500 px-4 py-2 w-full' onChange = {(e) => setSlotSize(e.target.value)}>
           <option value='small'> Small size (3cm diagonal)</option>
@@ -100,6 +112,14 @@ const CreateTray = () => {
             type='text'
             value={photo}
             onChange={(e) => setPhoto(e.target.value)}
+            className='border-2 border-gray-500 px-4 py-2 w-full' />
+        </div>
+        <div className='my-4'>
+          <label className='text-xl mr-4 text-gray-500'>Description</label>
+          <input
+            type='text'
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             className='border-2 border-gray-500 px-4 py-2 w-full' />
         </div>
         <div className='my-4'>

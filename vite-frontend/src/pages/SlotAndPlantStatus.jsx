@@ -12,7 +12,7 @@ const SlotAndPlantStatus = ({ slot, seed }) => {
     }, [slot]);
 
     return (
-<div classname=''>
+<div className=''>
 <div className='overflow-y-auto max-h-[400px]'>
             Info
         </div>

@@ -46,6 +46,9 @@ export const TraysSchema = mongoose.Schema(
         easyName: {
             type: String,
         },
+        type: {
+            type: String,
+        },
         slotSize: {
             type: String,
             required: true
@@ -66,6 +69,7 @@ export const TraysSchema = mongoose.Schema(
             type: Boolean,
             required: true
         },
+        description: String,
         photo: String,
     },
     {

@@ -3,16 +3,29 @@ import { MdOutlineAddBox, MdOutlineEdit, MdOutlineDelete } from 'react-icons/md'
 import { TbLayoutNavbarCollapseFilled, TbLayoutNavbarExpandFilled } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 import Spinner from '../Spinner';
+import RequestConfirmationForm from '../../pages/RequestConfirmationForm';
+import ModalForm from '../../pages/ModalForm';
+import { useSnackbar, enqueueSnackbar } from 'notistack';
+import axios from 'axios';
+import BackendURL from '../BackendURL';
 
-const ListComponent = ({ title, data, loading, renderHeader, renderItem, onEditClick }) => {
+const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, onEditClick }) => {
+  const data = dataLoader.data;
   const [collapsed, setCollapsed] = useState(false);
   const [sortBy, setSortBy] = useState(null);
   const [sortAsc, setSortAsc] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
 
+  if( !title || !dataLoader || loading || !renderHeader || !renderItem|| !onEditClick)
+    return (
+      <div><Spinner/></div>
+    );
   console.log(`List component Fired for title = ${title}`);
-   // Load collapse state from session storage on component mount
+  // Load collapse state from session storage on component mount
   useEffect(() => {
     const savedState = sessionStorage.getItem(`${title}_collapsed`);
+    console.log( `Read Old collapsed status ${title}_collapsed = ${JSON.stringify(savedState)}`)
     if (savedState) {
       setCollapsed(JSON.parse(savedState));
     }
@@ -44,7 +57,24 @@ const ListComponent = ({ title, data, loading, renderHeader, renderItem, onEditC
     if (aValue > bValue) return sortAsc ? 1 : -1;
     return 0;
   }) : data;
- 
+
+
+  const handleDeleteAny = async (title, item) => {
+    // try {
+        const response = await axios.delete(`${BackendURL}/${title.toLowerCase()}/${item?._id}`);
+        enqueueSnackbar("Record deleted!", { variant: 'success' });
+        console.log( `Data in handle delete is ${JSON.stringify(data)}`);
+        // Update data after deletion
+        const updatedData = data.filter(dataItem => dataItem._id !== item._id);
+        dataLoader.setData(updatedData);
+    // } catch (error) {
+    //     enqueueSnackbar("Something went wrong, please check console !", { variant: 'error' });
+    // }
+}
+  const showModalContent = (content) => {
+    setShowModal(true);
+    setModalContent(content);
+  }
   return (
     <div className='mb-8'>
       <div className='flex justify-between items-center'>
@@ -78,9 +108,15 @@ const ListComponent = ({ title, data, loading, renderHeader, renderItem, onEditC
                     <td className='border border-slate-700 rounded-md text-center w-5'>
                       <div className='flex justify-center gap-x-1 '>
                         <MdOutlineEdit className='text-yellow-600 text-2xl mx-2' onClick={onEditClick(item)} />
-                        <Link to={`/${title.toLowerCase()}/delete/${item._id}`}>
-                          <MdOutlineDelete className='text-red-600 text-2xl mx-2' />
-                        </Link>
+
+                        <MdOutlineDelete className='text-red-600 text-2xl mx-2' onClick={() => {
+                          showModalContent(<RequestConfirmationForm
+                            onConfirm={() => handleDeleteAny(title,item)}
+                            onCancel={() => setShowModal(false)}
+                            question={`Are you sure you want to remove ${title} record id=${item?._id}?`}
+                          />)
+                        }} />
+
                       </div>
                     </td>
                     {renderItem(item)}
@@ -91,6 +127,7 @@ const ListComponent = ({ title, data, loading, renderHeader, renderItem, onEditC
           )}
         </div>
       )}
+      {showModal && (<ModalForm content={modalContent} onClose={() => { setShowModal(false) }} />)}
     </div>
   );
 };

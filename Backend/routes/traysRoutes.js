@@ -18,10 +18,12 @@ router.post('/', async (request, response) => {
             return response.status(400).send("Post all required fields propId, nbSlots, slotSize");
         const newRecord = {
             propId: request.body.propId,
+            type: request.body.type,
             nbRows: request.body.nbRows,
             nbCols: request.body.nbCols,
             easyName: request.body.easyName,
             slotSize: request.body.slotSize,
+            description:request.body.description,
             slots: [],
             used: false,
         };
