@@ -8,3 +8,6 @@ Hydroponics gardening, a soil-less method of cultivating plants, has sparked a w
 **Integrated Automated Gardening System**
 
 **EasyHydro&copy;** is an Integrated Automated Gardening System, a comprehensive solution designed to revolutionize home gardening. It combines innovative hardware, software, and management systems to create an autonomous gardening experience. With a focus on hobbyists and small-scale systems, the system integrates IoT devices and advanced software algorithms to optimize plant growth. From nutrient delivery to watering management, it leverages available energy and weather conditions to ensure optimal plant health. Powered by cutting-edge technology, this system offers a seamless gardening experience for enthusiasts of all levels.
+
+
+**EasyHydro&copy;** is being developed with the help of ChatGPT and DALL E.
