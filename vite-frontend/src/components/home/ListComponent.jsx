@@ -63,7 +63,7 @@ const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, o
     // try {
         const response = await axios.delete(`${BackendURL}/${title.toLowerCase()}/${item?._id}`);
         enqueueSnackbar("Record deleted!", { variant: 'success' });
-        console.log( `Data in handle delete is ${JSON.stringify(data)}`);
+        // console.log( `Data in handle delete is ${JSON.stringify(data)}`);
         // Update data after deletion
         const updatedData = data.filter(dataItem => dataItem._id !== item._id);
         dataLoader.setData(updatedData);

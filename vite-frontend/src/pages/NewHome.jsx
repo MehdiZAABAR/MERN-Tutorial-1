@@ -28,12 +28,12 @@ const Home = () => {
             onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
             renderHeader: (handleSort) => (
                 <>
-                    <th className='border border-slate-600 rounded-md'>ID</th>
-                    <th className='border border-slate-600 rounded-md'>Used</th>
+                    <th className='border border-slate-600 rounded-md' onClick={() => handleSort('propId')}>ID</th>
+                    <th className='border border-slate-600 rounded-md' onClick={() => handleSort('used')}>Used</th>
                     <th className='border border-slate-600 rounded-md max-md:hidden'>Name</th>
-                    <th className='border border-slate-600 rounded-md max-md:hidden'>Slot Size</th>
-                    <th className='border border-slate-600 rounded-md '>Nb of Row</th>
-                    <th className='border border-slate-600 rounded-md max-md:hidden'>Nb of Cols</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('slotSize')}>Slot Size</th>
+                    <th className='border border-slate-600 rounded-md 'onClick={() => handleSort('nbRows')}>Nb of Row</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'onClick={() => handleSort('nbCols')}>Nb of Cols</th>
                     <th className='border border-slate-600 rounded-md max-md:hidden'>Slots</th>
                     <th className='border border-slate-600 rounded-md '>Operations</th>
                 </>
