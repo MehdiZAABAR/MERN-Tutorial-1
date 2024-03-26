@@ -137,7 +137,7 @@ const Home = () => {
     return (
         <>
         <HomeContent/>
-        <ShowTables pageTitle = "Easy Hydro&copy;" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
+        <ShowTables pageTitle = "Manage your system" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
         <div className='p-4 mb-8 flex justify-between items-center text-2xl my-4 text-green-800'>
         <Link to="/all">
         <span title="Show all system tables">

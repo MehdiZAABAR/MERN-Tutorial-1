@@ -21,9 +21,9 @@ const ShowTables = ( {pageTitle, dataSources, showModal, setModal, modalContent}
 
     return (
         <div className='p-4'>
-            <div className='flex justify-between items-center' >
-            <h1 className='text-2xl my-4'>{pageTitle}</h1>       
-            </div>
+  <div className='flex justify-center items-center' > {/* Change justify-between to justify-center */}
+    <h1 className='text-2xl my-4'>{pageTitle}</h1>       
+  </div>
             <div>
             {dataSources.map(element => (
                 <React.Fragment key={element.title + "_"}>

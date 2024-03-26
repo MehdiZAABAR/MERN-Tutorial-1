@@ -235,21 +235,18 @@ const HomeContent = () => {
     </li>
     <li>
       <strong>Slanted Pipe Systems:</strong>
-      <ul class="list-disc pl-8 mt-4"> <li>Maximizes Space: By tilting the pipes, inclined systems utilize both vertical and horizontal space effectively. This is ideal for areas with limited floor space but some available height.</li>
+      This system offers a unique and efficient way to cultivate plants using hydroponics. Unlike traditional horizontal or vertical setups, these systems utilize PVC pipes mounted on a slanted frame, resembling a wide ladder.
+This angled design provides several advantages:
+      <ul class="list-disc pl-8 mt-4"> <li>Maximizes Space: By tilting the pipes, slanted systems utilize both vertical and horizontal space effectively. This is ideal for areas with limited floor space but some available height.</li>
         <li>Adaptable Growth: The angle of the pipes can be adjusted to encourage vertical growth for taller plants or a more horizontal spread for bushier varieties.</li>
         <li>Optimized Water Management: The incline allows for better control over water flow. The water pump duty cycle (how often it runs) can be adjusted based on the angle to ensure proper water distribution and prevent pooling.</li>
         <li>Enhanced Sun Exposure: The orientation of the inclined system can be strategically chosen to maximize sunlight exposure for your plants.</li>
       </ul>
-      While setup costs for inclined systems are typically moderate due to the materials and labor involved, they offer a versatile and efficient solution for hydroponic gardening in diverse environments.
+      While setup costs for slanted pipe systems are typically moderate due to the materials and labor involved, they offer a versatile and efficient solution for hydroponic gardening in diverse environments.
     </li>
   </ul>
 
-  <p>
-    Hydroponics doesn't stop there. Large water basin systems are another option, where plants rest on buoyant polystyrene plates. In these setups, water circulation is ensured through pumps or air stones, keeping your plants oxygenated. Large water basin systems may occupy significant space horizontally and require continuous water pump operation for circulation. Sunlight exposure can be managed with proper shading or positioning.  </p>
-
-  <p>
-    By embracing these diverse hydroponic configurations, you can overcome space limitations and cultivate your plants efficiently, regardless of your gardening goals.
-  </p>
+ 
 </div>
 
                 </div>
@@ -275,7 +272,13 @@ const HomeContent = () => {
                                 />
                             </div>
                         ))}
-                    </Carousel>
+                    </Carousel><div className='flex-1 p-8 text-lg leading-relaxed'>
+                    <p>
+    Hydroponics doesn't stop there. Large water basin systems are another option, where plants rest on buoyant polystyrene plates. In these setups, water circulation is ensured through pumps and air stones pump tiny air bubble into the water 
+    keeping your plants roots oxygenated. Large water basin systems may occupy significant space horizontally and require continuous water pump operation for circulation. Sunlight exposure can be managed with proper shading or positioning.  
+    By embracing these diverse hydroponic configurations, you can overcome space limitations and cultivate your plants efficiently, regardless of your gardening goals.
+    </p>
+    </div>
                 </div>
             </div>
             <ArrowIcon /> {/* Add the ArrowIcon component */}
