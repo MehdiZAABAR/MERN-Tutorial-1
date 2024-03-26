@@ -13,11 +13,13 @@ import TrayComponent from './pages/TrayComponent.jsx'
 import CreateMood from './components/home/CreateMood.jsx'
 import CreateKeyword from './components/home/CreateKeyWord.jsx'
 import GetEditAnyRecord from './pages/GetEditAnyRecord.jsx'
+import AllTables from './pages/AllTables.jsx'
 
 const App = () => {
   return (
     <Routes>
       <Route path='/' element={<Home/>} />
+      <Route path='/All' element={<AllTables/>} />
       <Route path='/Seeds/Create' element={<CreateSeed/>} />
       <Route path='/Seeds/Details/:id' element={<ShowSeed/>} />
       <Route path='/Seeds/Edit/:id' element={<EditSeed/>} />

@@ -16,13 +16,13 @@ import * as Schemas from '../components/home/SchemasForFrontEnd'
 import { onEditClick } from '../components/home/onEditClickComponent';
 import DebugListComponent from '../components/utils/DebugListComponent';
 import Spinner from '../components/Spinner';
-import ShowTables from './ShowTables';
-import HomeContent from './HomeContent';
-import {SiAzuredataexplorer} from 'react-icons/si'
+import ShowTables from '../pages/ShowTables'
+import BackButton from '../components/BackButton';
 
-const Home = () => {
-    const [showModal, setModal] = useState(false);
+const AllTables = () => {
     const [modalContent, setModalContent] = useState('');
+    const [showModal, setModal] = useState(false);
+
     const dataSources = [
         {
             title: 'Trays',
@@ -87,6 +87,62 @@ const Home = () => {
             )
         },
         {
+            title: 'Keywords',
+            schema: Schemas.KeywordSchema,
+            data: useDataFetching('Keywords'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => ((
+                <>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('text')}>Text</th>
+                </>
+            )),
+            renderItem: (item, dataSource) => (
+                <>
+                    <td className="border border-slate-600 rounded-md"  >{item.text}</td>
+                </>
+            )
+        },
+        {
+            title: 'Moods',
+            schema: Schemas.MoodSchema,
+            data: useDataFetching('Moods'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => ((
+                <>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('text')}>Text</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('value')}>Value</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('icon')}>Icon</th>
+                </>
+            )),
+            renderItem: (item, dataSource) => (
+                <>
+                    <td className="border border-slate-600 rounded-md"  >{item.text}</td>
+                    <td className="border border-slate-600 rounded-md text-center">{item.value}</td>
+                    <td className="border border-slate-600 rounded-md "><img src={item.icon} alt={item.text} style={{ marginRight: '8px', width: '84px', height: '84px' }} /></td>
+                </>
+            )
+        },
+        {
+            title: 'Observations',
+            schema: Schemas.ObservationSchema,
+            data: useDataFetching('Observations'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => ((
+                <>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('text')}>Text</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('date')}>Date</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('Tray')}>Tray</th>
+                </>
+            )),
+            renderItem: (item, dataSource) => (
+                <>
+                    <td className="border border-slate-600 rounded-md"  >{item.text}</td>
+                    <td className="border border-slate-600 rounded-md text-center">{item.date}</td>
+                    <td className="border border-slate-600 rounded-md ">{item.trays}</td>
+                </>
+            )
+        },
+        {
             title: 'Seeds',
             schema: Schemas.SeedSchema,
             data: useDataFetching('Seeds'),
@@ -131,21 +187,53 @@ const Home = () => {
                     </td>
                 </>
             )
+        },
+        {
+            title: 'Slots',
+            schema: Schemas.SlotSchema,
+            data: useDataFetching('Slots'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => (
+                <>
+                    <th className='border border-slate-600 rounded-md'>Name</th>
+                    <th className='border border-slate-600 rounded-md'>Seed</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Location</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Slot Size</th>
+                    <th className='border border-slate-600 rounded-md '>Operations</th>
+                </>
+            ),
+            renderItem: (slot) => (
+                <>
+                    <td className='border border-slate-700 rounded-md text-center'> {slot.name}</td>
+                    <td className='border border-slate-700 rounded-md text-center'> {slot.used ? (slot.seed) : ("Free")}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{slot.used ? ((slot.tray != '') ? (slot.tray) : (slot.growingSystem)) : ("Free")}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{slot.sz}</td>
+                    <td className='border border-slate-700 rounded-md text-center '>
+                        <div className='flex justify-center gap-x-4 '>
+                            <Link to={`/slots/details/${slot._id}`}>
+                                <BsInfoCircle className='text-2xl text-green-800' />
+                            </Link>
+                            <Link to={`/slots/edit/${slot._id}`}>
+                                <AiOutlineEdit className='text-2xl text-yellow-600' />
+                            </Link>
+                            <Link to={`/slots/delete/${slot._id}`}>
+                                <MdOutlineDelete className='text-2xl text-red-600' />
+                            </Link>
+                            <Link to={`/slots/picture/${slot._id}`}>
+                                <AiFillCamera className='text-2xl text-red-600' />
+                            </Link>
+                        </div>
+                    </td>
+                </>
+            )
         }
     ];
 
     return (
         <>
-        <HomeContent/>
-        <ShowTables pageTitle = "Easy Hydro&copy;" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
-        <div className='p-4 mb-8 flex justify-between items-center text-2xl my-4 text-green-800'>
-        <Link to="/all">
-        <span title="Show all system tables">
-            <SiAzuredataexplorer className="text-3xl text-green-800" />
-        </span>
-        </Link>
-        </div>
+        <BackButton/>
+        <ShowTables pageTitle = "All System Tables" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
         </>
     );
 };
-export default Home;
+export default AllTables;

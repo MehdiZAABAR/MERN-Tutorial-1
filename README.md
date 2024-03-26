@@ -11,3 +11,7 @@ Hydroponics gardening, a soil-less method of cultivating plants, has sparked a w
 
 
 **EasyHydro&copy;** is being developed with the help of ChatGPT and DALL E.
+
+Installation Notes :
+cd vite-frontend
+npm install react-responsive-carousel styled-components

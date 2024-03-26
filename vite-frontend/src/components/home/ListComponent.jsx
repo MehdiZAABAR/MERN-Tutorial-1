@@ -37,7 +37,6 @@ const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, o
 
   // Toggle collapse state
   const toggleCollapse = () => {
-    console.log( `toggling collapsed for title ${title}`);
     setCollapsed(prevCollapsed => !prevCollapsed);
   };
   const handleSort = (property) => {
