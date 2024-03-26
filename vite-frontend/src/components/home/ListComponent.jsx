@@ -21,15 +21,14 @@ const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, o
     return (
       <div><Spinner/></div>
     );
-  // console.log(`List component Fired for title = ${title}`);
+  //  console.log(`List component Fired for title = ${title}`);
   // Load collapse state from session storage on component mount
   useEffect(() => {
     const savedState = sessionStorage.getItem(`${title}_collapsed`);
-    // console.log( `Read Old collapsed status ${title}_collapsed = ${JSON.stringify(savedState)}`)
     if (savedState) {
       setCollapsed(JSON.parse(savedState));
     }
-  }, [title]);
+  },  [ title]);
 
   // Save collapse state to session storage when it changes
   useEffect(() => {
@@ -38,6 +37,7 @@ const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, o
 
   // Toggle collapse state
   const toggleCollapse = () => {
+    console.log( `toggling collapsed for title ${title}`);
     setCollapsed(prevCollapsed => !prevCollapsed);
   };
   const handleSort = (property) => {

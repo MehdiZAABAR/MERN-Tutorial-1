@@ -30,7 +30,6 @@ const GetEditAnyRecord = ({ collectionName, allRecords, recordId, recordSchema, 
             }
         }
         else {
-            console.log( `in GetEditAnyRecord : all records received = ${JSON.stringify(allRecords)}`);
             const nRec = allRecords?.find(item => item._id === recordId);
             if( nRec)
                 setRecordData(nRec);
@@ -53,7 +52,6 @@ const GetEditAnyRecord = ({ collectionName, allRecords, recordId, recordSchema, 
         e.preventDefault();
         try {
             setLoading(true);
-            console.log( `url and data {(${BackendURL}/${collectionName}/${recordId}, newrec data ${JSON.stringify(recordData)});}`);
             await axios.put(`${BackendURL}/${collectionName}/${recordId}`, recordData);
             setLoading(false);
             enqueueSnackbar('Record updated successfully!', { variant: 'success' });

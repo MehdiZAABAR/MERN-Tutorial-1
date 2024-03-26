@@ -185,7 +185,6 @@ const Home = () => {
                 </>
             )
         },
-       
         {
             title: 'Slots',
             schema: Schemas.SlotSchema,
@@ -228,26 +227,24 @@ const Home = () => {
     ];
 
     return (
-        <div>
-            <div className='p-4'>
-                {dataSources.map(element => (
-                    <React.Fragment key={element.title}>
-                        <div>
-                            {element.data.loading ? <Spinner /> : (
-                                <ListComponent
-                                    onEditClick={(item) => () => element.onEditClick(item, element)}
-                                    key={element.title}
-                                    title={element.title}
-                                    dataLoader={element.data}
-                                    loading={element.data.loading}
-                                    renderHeader={element.renderHeader}
-                                    renderItem={(item) => element.renderItem(item, element)}
-                                />
-                            )}
-                        </div>
-                    </React.Fragment>
-                ))}
-            </div>
+        <div className='p-4'>
+            {dataSources.map(element => (
+                <React.Fragment key={element.title + "_"}>
+                    <div>
+                        {element.data.loading ? <Spinner /> : (
+                            <ListComponent
+                                onEditClick={(item) => () => element.onEditClick(item, element)}
+                                key={element.title}
+                                title={element.title}
+                                dataLoader={element.data}
+                                loading={element.data.loading}
+                                renderHeader={element.renderHeader}
+                                renderItem={(item) => element.renderItem(item, element)}
+                            />
+                        )}
+                    </div>
+                </React.Fragment>
+            ))}
             {showModal && (<ModalForm content={modalContent} onClose={() => { setModal(false) }} />)} 
         </div>
     );
