@@ -39,7 +39,7 @@ router.post('/', async (request, response) => {
 // Route for getting all records from collection
 router.get('/', async (request, response) => {
     try {
-        console.log(`Router get Moods with query params ${JSON.stringify(request.query)}`);
+        // console.log(`Router get Moods with query params ${JSON.stringify(request.query)}`);
 
         const { value } = request.query;
         if (value) {

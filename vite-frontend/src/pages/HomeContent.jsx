@@ -221,12 +221,12 @@ const HomeContent = () => {
             <div className="bg-green-600 text-white py-4 px-8 text-3xl font-bold text-center">Easy Hydro© For All Gardening Enthusiasts</div>
             <div className="flex">
                 <div className="flex-1 p-8">
-                <div class="text-lg leading-relaxed">
+                <div className="text-lg leading-relaxed">
   <p>
     Hydroponics offers a game-changer for plant cultivation. Unlike traditional soil-based methods, hydroponics provides adaptable setups that cater to diverse spaces and preferences.
   </p>
 
-  <ul class="list-disc pl-8 mt-4">
+  <ul className="list-disc pl-8 mt-4">
     <li>
       <strong>Horizontal PVC Pipe Systems:</strong> Picture rows of PVC pipes mounted above a table, cradling your plants. While they may not inherently minimize surface area, multi-floor setups can optimize space utilization. They are ideal for smaller areas, reducing water pump usage and allowing for optimal sunlight exposure. Additionally, they are relatively affordable compared to other hydroponic configurations.
     </li>
@@ -237,7 +237,7 @@ const HomeContent = () => {
       <strong>Slanted Pipe Systems:</strong>
       This system offers a unique and efficient way to cultivate plants using hydroponics. Unlike traditional horizontal or vertical setups, these systems utilize PVC pipes mounted on a slanted frame, resembling a wide ladder.
 This angled design provides several advantages:
-      <ul class="list-disc pl-8 mt-4"> <li>Maximizes Space: By tilting the pipes, slanted systems utilize both vertical and horizontal space effectively. This is ideal for areas with limited floor space but some available height.</li>
+      <ul className="list-disc pl-8 mt-4"> <li>Maximizes Space: By tilting the pipes, slanted systems utilize both vertical and horizontal space effectively. This is ideal for areas with limited floor space but some available height.</li>
         <li>Adaptable Growth: The angle of the pipes can be adjusted to encourage vertical growth for taller plants or a more horizontal spread for bushier varieties.</li>
         <li>Optimized Water Management: The incline allows for better control over water flow. The water pump duty cycle (how often it runs) can be adjusted based on the angle to ensure proper water distribution and prevent pooling.</li>
         <li>Enhanced Sun Exposure: The orientation of the inclined system can be strategically chosen to maximize sunlight exposure for your plants.</li>

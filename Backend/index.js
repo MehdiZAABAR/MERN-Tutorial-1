@@ -9,8 +9,12 @@ import moodsRouter from "./routes/moodsRoutes.js"
 import kwRouter from "./routes/keywordsRoutes.js"
 import cors from "cors"
 
+const logRequests = (req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+};
 const app = express();
-
+// app.use(logRequests);
 //Middleware to parse request body
 //if you forget the two braces of json(), the browser will run undefinitely with no error
 app.use( express.json());
@@ -26,8 +30,8 @@ app.use( cors());
 // ));
 
 app.get( '/', (request, response) => {
-    console.log( request);
-    return response.status(234).send( "Welcome to MERN stack tutorial !");
+    console.log( "Request to welcome!");
+    return response.status(234).send( "Welcome to EasyHydro !");
 
 })
 app.use( '/seeds', seedsRouter);
