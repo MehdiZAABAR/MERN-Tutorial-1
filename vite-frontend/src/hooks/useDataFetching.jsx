@@ -24,7 +24,7 @@ import BackendURL from '../components/BackendURL';
 // };
 
 // export default useDataFetching;
-export const useDataFetching = (endpoint) => {
+export const useDataFetching = (endpoint, contextSetter) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +34,8 @@ export const useDataFetching = (endpoint) => {
       try {
         const response = await axios.get(`${BackendURL}/${endpoint}`);
         setData(response.data.data);
+        if( contextSetter)
+            contextSetter(response.data.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -41,8 +43,20 @@ export const useDataFetching = (endpoint) => {
       }
     };
     fetchData();
-  }, [endpoint]); // Dependency on endpoint only
+  }, [endpoint, contextSetter]); // Dependency on endpoint only
 
   return { data, loading, setData };
 };
 export default useDataFetching;
+
+export const fetchDataAsync = async (endpoint, contextSetter) => {
+     try {
+        const response = await axios.get(`${BackendURL}/${endpoint}`);
+        if( contextSetter)
+            contextSetter(response.data.data);
+        return {data:response.data.data};
+      } catch (error) {
+        console.log(error);
+      } 
+  return {};
+};

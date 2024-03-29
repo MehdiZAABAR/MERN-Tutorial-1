@@ -59,7 +59,7 @@ router.get( '/', async ( request, response) => {
 router.get( '/tray:id', async ( request, response) => {
     try {
         const tid = request.params.id;
-        //console.log( `Find all slots belonging to tray ${JSON.stringify(request.params.id)}`);
+        console.log( `Find all slots belonging to tray ${JSON.stringify(request.params.id)}`);
         const mRecord = await Slot.find( { seedlingTray: tid});
         return response.status(200).json(
         { 

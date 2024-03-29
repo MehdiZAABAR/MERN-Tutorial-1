@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {createContext, useState} from 'react'
 import {Routes, Route} from "react-router-dom"
 import CreateSeed from "./pages/CreateSeed.jsx"
 import EditSeed from "./pages/EditSeed.jsx"
@@ -12,14 +12,22 @@ import Home from "./pages/NewHome.jsx"
 import TrayComponent from './pages/TrayComponent.jsx'
 import CreateMood from './components/home/CreateMood.jsx'
 import CreateKeyword from './components/home/CreateKeyWord.jsx'
-import GetEditAnyRecord from './pages/GetEditAnyRecord.jsx'
+import Stats from './pages/Stats.jsx'
 import AllTables from './pages/AllTables.jsx'
 
+export const AppDataSharingContext = createContext();
+
 const App = () => {
+  const [appTrays, setAppTrays] = useState(null);
+  const [appSeeds, setAppSeeds] = useState(null);
+  const [appGrowingSystems, setAppGrowingSystems] = useState(null);
+  
   return (
+    <AppDataSharingContext.Provider value={{ appTrays, setAppTrays, appSeeds, setAppSeeds, appGrowingSystems, setAppGrowingSystems }}>
     <Routes>
       <Route path='/' element={<Home/>} />
       <Route path='/All' element={<AllTables/>} />
+      <Route path='/Stats' element={<Stats/>} />
       <Route path='/Seeds/Create' element={<CreateSeed/>} />
       <Route path='/Seeds/Details/:id' element={<ShowSeed/>} />
       <Route path='/Seeds/Edit/:id' element={<EditSeed/>} />
@@ -35,6 +43,8 @@ const App = () => {
       <Route path='/Moods/Create' element={<CreateMood/>} />
       <Route path='/Keywords/Create' element={<CreateKeyword/>} />
     </Routes>
+    </AppDataSharingContext.Provider>
+
   )
 }
 

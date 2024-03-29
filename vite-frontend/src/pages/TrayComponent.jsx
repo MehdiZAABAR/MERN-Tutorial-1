@@ -388,10 +388,12 @@ const TrayComponent = () => {
       // Fetch tray data
       const trayResponse = await axios.get(`${BackendURL}/trays/${id}`);
       setTray(trayResponse.data);
+      console.log( `tray = ${JSON.stringify(trayResponse.data)}`);
 
       // Fetch slots data belonging to the tray
       const slotsResponse = await axios.get(`${BackendURL}/slots/tray${id}`);
       setSlots(slotsResponse.data.data);
+      console.log( `slots = ${JSON.stringify(slotsResponse.data)}`);
 
       // Fetch seeds data
       const seedsResponse = await axios.get(`${BackendURL}/seeds`);

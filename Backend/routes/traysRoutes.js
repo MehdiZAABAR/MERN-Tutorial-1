@@ -61,11 +61,9 @@ router.post('/', async (request, response) => {
                         console.log( `insert ${slot.name} row ${slot.trayRow} col ${slot.trayCol}`);
                         mslots.push( slot);
                 }
-        console.log( JSON.stringify(mslots));
         const res = await Slot.insertMany(mslots);
         if( res)
         {
-            console.log( JSON.stringify(res));
             res.forEach(element => {
                 newRecord.slots.push( element._id);
             });

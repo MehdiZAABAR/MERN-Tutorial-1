@@ -1,33 +1,29 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Link } from 'react-router-dom';
-import ListComponent from '../components/home/ListComponent';
 import useDataFetching from '../hooks/useDataFetching';
 import { AiFillCamera, AiOutlineEdit } from 'react-icons/ai';
 import { BsInfoCircle } from 'react-icons/bs';
 import { MdOutlinePreview, MdOutlineDelete } from 'react-icons/md';
-import { TfiCommentsSmiley } from 'react-icons/tfi'
 import CreateTraysSlots from '../components/home/CreateTraysSlots'
-import { PiPianoKeysFill } from 'react-icons/pi'
-import GetEditAnyRecord from './GetEditAnyRecord';
 import { useState } from 'react';
-import ModalForm from './ModalForm';
-import { enqueueSnackbar } from 'notistack';
 import * as Schemas from '../components/home/SchemasForFrontEnd'
 import { onEditClick } from '../components/home/onEditClickComponent';
-import DebugListComponent from '../components/utils/DebugListComponent';
-import Spinner from '../components/Spinner';
 import ShowTables from './ShowTables';
 import HomeContent from './HomeContent';
 import {SiAzuredataexplorer} from 'react-icons/si'
+import { ImStatsDots } from "react-icons/im";
+import { AppDataSharingContext } from '../App';
 
 const Home = () => {
     const [showModal, setModal] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    const { appTrays, setAppTrays, appSeeds, setAppSeeds } = useContext(AppDataSharingContext);
+
     const dataSources = [
         {
             title: 'Trays',
             schema: Schemas.TraysSchema,
-            data: useDataFetching('Trays'),
+            data: useDataFetching('Trays', setAppTrays),
             onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
             renderHeader: (handleSort) => (
                 <>
@@ -89,7 +85,7 @@ const Home = () => {
         {
             title: 'Seeds',
             schema: Schemas.SeedSchema,
-            data: useDataFetching('Seeds'),
+            data: useDataFetching('Seeds', setAppSeeds),
             onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
             renderHeader: (handleSort) => (
                 <>
@@ -138,13 +134,18 @@ const Home = () => {
         <>
         <HomeContent/>
         <ShowTables pageTitle = "Manage your system" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
-        <div className='p-4 mb-8 flex justify-between items-center text-2xl my-4 text-green-800'>
-        <Link to="/all">
+        <div className="p-4 mb-8 flex justify-center items-center text-2xl my-4 text-green-800">
+    <Link to="/all" className="mx-4">
         <span title="Show all system tables">
             <SiAzuredataexplorer className="text-3xl text-green-800" />
         </span>
-        </Link>
-        </div>
+    </Link>
+    <Link to="/Stats" className="mx-4">
+        <span title="Statistics">
+            <ImStatsDots className="text-3xl text-green-600" />
+        </span>
+    </Link>
+</div>
         </>
     );
 };
