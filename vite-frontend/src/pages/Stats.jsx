@@ -8,7 +8,7 @@ import ComputeStatsSeedsInTrays from '../hooks/ComputeStatsSeedsInTrays';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 
-const GenerateColors = (numColors) =>  {
+const GenerateColors = (numColors) => {
     const baseHue = 0; // Starting hue value (0-360)
     const saturation = 80; // Saturation value (0-100)
     const lightness = 60; // Lightness value (0-100)
@@ -22,7 +22,7 @@ const GenerateColors = (numColors) =>  {
         const hue = (baseHue + (i * (360 / numColors))) % 360;
         const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
         const borderColor = `hsl(${hue}, ${saturation}%, ${lightness - borderDarkness}%)`;
-        
+
         backgroundColors.push(backgroundColor);
         borderColors.push(borderColor);
     }
@@ -44,9 +44,11 @@ const GenerateColors = (numColors) =>  {
 
     return { backgroundColors: shuffledBackgroundColors, borderColors: shuffledBorderColors };
 };
-const Stats = () => {   
+const Stats = () => {
     const { appTrays, appSeeds } = useContext(AppDataSharingContext);
+    const [chartSize, setCharSize] = useState('w-1/3');
     const [selectedTray, setSelectedTray] = useState({ _id: '0', easyName: 'AllTrays' });
+    let trayStats = {};
     const [chartData, setChartData] = useState(null);
     const handleSelectTray = (event) => {
         const selectedTrayId = event.target.value;
@@ -61,15 +63,15 @@ const Stats = () => {
 
     useEffect(() => {
         (async () => {
-            let trayStats = {};
-            if( selectedTray._id === '0') // AllTrays
+
+            if (selectedTray._id === '0') // AllTrays
             {
-                trayStats = await ComputeStatsSeedsInTrays({_id:'0', nbRows:1, nbCols:1}, appSeeds);
+                trayStats = await ComputeStatsSeedsInTrays({ _id: '0', nbRows: 1, nbCols: 1 }, appSeeds);
             }
             else
                 trayStats = await ComputeStatsSeedsInTrays(appTrays?.find(tray => tray._id === selectedTray._id), appSeeds);
             // console.log(`tray ${selectedTray.easyName} stats`, trayStats);
-            const {backgroundColors, borderColors} = GenerateColors(trayStats.traySeeds?.length);
+            const { backgroundColors, borderColors } = GenerateColors(trayStats.traySeeds?.length);
 
             setChartData({
                 labels: trayStats.traySeeds?.map(seed => seed.easyName),
@@ -81,33 +83,12 @@ const Stats = () => {
                     borderWidth: 1,
                 }],
             });
+            let chSz = Math.min(3 + Math.ceil((trayStats.traySeeds?.length || 0) / 14), 12);
+            console.log(`charsz =${chSz}`);
+            setCharSize(`w-${chSz}/12`);
         })();
 
     }, [selectedTray, appTrays, appSeeds]);
-
-    // const dataOverall = {
-    //     labels: ['Total Seeds Used'],
-    //     datasets: [
-    //         {
-    //             label: 'Seeds Usage Overall',
-    //             data: [895],
-    //             backgroundColor: 'rgba(255, 99, 132, 0.6)',
-    //             borderColor: 'rgba(255, 99, 132, 1)',
-    //             borderWidth: 1,
-    //         },
-    //     ],
-    // };
-
-    const options = {
-        indexAxis: 'x', // Use x-axis as category axis
-        scales: {
-            x: {
-                grid: {
-                    display: false, // Hide x-axis grid lines
-                },
-            },
-        },
-    };
 
     return (
         <>
@@ -132,95 +113,61 @@ const Stats = () => {
                     </select>
                 </div>
             </div>
-            <div className="flex justify-start mt-4">
-                <div className="w-1/2">
-                    <h2 className="text-center">Seeds Usage for {selectedTray ? selectedTray.easyName : 'All Trays'}</h2>
-                    <div className="mt-4">
+            <div className={`flex justify-start mt-4 ${chartSize}`}>
+                <h2 className="text-center">Seeds Usage for {selectedTray ? selectedTray.easyName : 'All Trays'} {chartSize}</h2>
+
+                <div className="mt-4">
                     {chartData && (
-                            <Doughnut
-                                data={chartData}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: true,
-                                    plugins: {
-                                        // legend: {
-                                        //     display: true,
-                                        //     position: 'right',
-                                        //     align: 'start', // Align legend items vertically
-                                        // },
-                                        // legend: {
-                                        //     display: true,
-                                        //     position: 'right',
-                                        //     align: 'start',
-                                        //     labels: {
-                                        //         padding: 20, // Add padding between legend items
-                                        //         boxHeight: 20, // Adjust the height of each legend item box
-                                        //         usePointStyle: true, // Use point style (shape) for legend items
-                                        //         generateLabels: function(chart) {
-                                        //             const data = chart.data;
-                                        //             if (data.labels.length && data.datasets.length) {
-                                        //                 return data.labels.map((label, i) => {
-                                        //                     const meta = chart.getDatasetMeta(0);
-                                        //                     const style = meta.controller.getStyle(i);
-                                        //                     return {
-                                        //                         text: label,
-                                        //                         fillStyle: style.backgroundColor,
-                                        //                         strokeStyle: style.borderColor,
-                                        //                         lineWidth: style.borderWidth,
-                                        //                         pointStyle: style.pointStyle,
-                                        //                         hidden: isNaN(data.datasets[0].data[i]), // Hide legend item if the corresponding data is NaN
-                                        //                     };
-                                        //                 });
-                                        //             }
-                                        //             return [];
-                                        //         },
-                                        //     },
-                                        // },
-                                        legend: {
-                                            display: true,
-                                            position: 'right',
-                                            align: 'start',
-                                            labels: {
-                                                padding: 5, // Add padding between legend items
-                                                boxHeight: 20, // Adjust the height of each legend item box
-                                                usePointStyle: true, // Use point style (shape) for legend items
-                                                maxWidth: 200, // Adjust the maximum width of the legend
-                                                generateLabels: function(chart) {
-                                                    const data = chart.data;
-                                                    if (data.labels.length && data.datasets.length) {
-                                                        return data.labels.map((label, i) => {
-                                                            const meta = chart.getDatasetMeta(0);
-                                                            const style = meta.controller.getStyle(i);
-                                                            return {
-                                                                text: label,
-                                                                fillStyle: style.backgroundColor,
-                                                                strokeStyle: style.borderColor,
-                                                                lineWidth: style.borderWidth,
-                                                                pointStyle: style.pointStyle,
-                                                                hidden: isNaN(data.datasets[0].data[i]), // Hide legend item if the corresponding data is NaN
-                                                            };
-                                                        });
-                                                    }
-                                                    return [];
-                                                },
+                        <Doughnut
+                            data={chartData}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'right',
+                                        align: 'start',
+                                        labels: {
+                                            padding: 5, // Add padding between legend items
+                                            boxHeight: 20, // Adjust the height of each legend item box
+                                            usePointStyle: true, // Use point style (shape) for legend items
+                                            maxWidth: 200, // Adjust the maximum width of the legend
+                                            generateLabels: function (chart) {
+                                                const data = chart.data;
+                                                if (data.labels.length && data.datasets.length) {
+                                                    return data.labels.map((label, i) => {
+                                                        const meta = chart.getDatasetMeta(0);
+                                                        const style = meta.controller.getStyle(i);
+                                                        return {
+                                                            text: label,
+                                                            fillStyle: style.backgroundColor,
+                                                            strokeStyle: style.borderColor,
+                                                            lineWidth: style.borderWidth,
+                                                            pointStyle: style.pointStyle,
+                                                            hidden: isNaN(data.datasets[0].data[i]), // Hide legend item if the corresponding data is NaN
+                                                        };
+                                                    });
+                                                }
+                                                return [];
                                             },
                                         },
-                                        title: {
-                                            display: true,
-                                            text: `Seeds Usage for ${selectedTray ? selectedTray.easyName : 'All Trays'}`,
-                                            position: 'top',
-                                            align: 'center',
-                                            fullWidth: true,
-                                            font: {
-                                                size: 16,
-                                                weight: 'bold'
-                                            }
-                                        }
                                     },
-                                }}
-                            />
-                        )}
-                    </div>
+                                    title: {
+                                        display: true,
+                                        text: `Seeds Usage for ${selectedTray ? selectedTray.easyName : 'All Trays'}`,
+                                        position: 'top',
+                                        align: 'center',
+                                        fullWidth: true,
+                                        font: {
+                                            size: 16,
+                                            weight: 'bold'
+                                        }
+                                    }
+                                },
+                            }}
+                        />
+                    )}
                 </div>
             </div>
         </>
