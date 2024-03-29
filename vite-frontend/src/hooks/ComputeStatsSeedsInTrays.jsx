@@ -7,16 +7,26 @@ const ComputeStatsSeedsInTrays = async (Tray, Seeds) => {
         traySlots: [],
         error: null,
     };
+    // if( Tray)
+    //     console.log(`Tray = ${JSON.stringify(Tray)}` );
+    // else
+    //     console.log( "Tray null");
+    // console.log(`Seeds length= ${Seeds?.length}` );
 
-    // console.log( `ComputeStatsSeedsInTrays = async (${trayId}, ${JSON.stringify(Seeds)})`);
     if (!Tray || !Tray._id || !Seeds || Seeds.length < 1) {
         trayStats.error = 'Invalid Tray or Seeds data';
+        console.log('Invalid Tray or Seeds data' );
         return trayStats;
     }
 
     try {
-        const response = await axios.get(`${BackendURL}/Slots/tray${Tray._id}`);
-        //  console.log( `Rsp to get tray ${BackendURL}/Slots/tray${Tray._id} slots = `, response.data);
+        let response = {};
+        if( Tray._id === '0') //AllTrays
+        {
+            response = await axios.get(`${BackendURL}/Slots`);
+        }
+        else
+            response = await axios.get(`${BackendURL}/Slots/tray${Tray._id}`);
         trayStats.traySlots = response.data?.data || [];
         const totalSlots = trayStats.traySlots.length;
         const totalCells = Tray.nbCols * Tray.nbRows;
@@ -51,6 +61,7 @@ const ComputeStatsSeedsInTrays = async (Tray, Seeds) => {
         console.error(`Error fetching slots for Tray ${Tray._id} :`, error);
         trayStats.error = `Error fetching slots: ${error.message}`;
     }
+    // console.log( `Seeds of tray = ${trayStats.traySeeds.length}`);
     return trayStats;
 };
 
