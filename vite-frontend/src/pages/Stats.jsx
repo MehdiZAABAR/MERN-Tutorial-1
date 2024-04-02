@@ -83,6 +83,7 @@ const Stats = () => {
                     borderWidth: 1,
                 }],
             });
+            //let chSz = Math.min(1 + Math.ceil((trayStats.traySeeds?.length || 0) / 8), 3);
             let chSz = Math.min(3 + Math.ceil((trayStats.traySeeds?.length || 0) / 14), 12);
             console.log(`charsz =${chSz}`);
             setCharSize(`w-${chSz}/12`);
@@ -95,7 +96,7 @@ const Stats = () => {
             <div className="flex justify-between items-center">
                 <BackButton />
                 <ContextDataManager />
-                <div className="w-1/3 flex justify-end">
+                <div className="w-1/5 flex justify-end">
                     <label htmlFor="traySelect" className="mr-2">Select Tray:</label>
                     <select
                         id="traySelect"
@@ -113,10 +114,10 @@ const Stats = () => {
                     </select>
                 </div>
             </div>
-            <div className={`flex justify-start mt-4 ${chartSize}`}>
-                <h2 className="text-center">Seeds Usage for {selectedTray ? selectedTray.easyName : 'All Trays'} {chartSize}</h2>
+            {/* <div className={`flex justify-center mt-4 ${chartSize}`}> */}
+                 <h2 className="text-center">Seeds Usage for {selectedTray ? selectedTray.easyName : 'All Trays'} {chartSize}</h2> 
 
-                <div className="mt-4">
+                <div className={`mt-4 ${chartSize}`}>
                     {chartData && (
                         <Doughnut
                             data={chartData}
@@ -129,7 +130,7 @@ const Stats = () => {
                                         position: 'right',
                                         align: 'start',
                                         labels: {
-                                            padding: 5, // Add padding between legend items
+                                            padding: 10, // Add padding between legend items
                                             boxHeight: 20, // Adjust the height of each legend item box
                                             usePointStyle: true, // Use point style (shape) for legend items
                                             maxWidth: 200, // Adjust the maximum width of the legend
@@ -169,7 +170,7 @@ const Stats = () => {
                         />
                     )}
                 </div>
-            </div>
+            {/* </div> */}
         </>
     );
 }
