@@ -4,11 +4,11 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { AppDataSharingContext } from '../App'
 import ContextDataManager from '../components/utils/ContextDataManager';
-import ComputeStatsSeedsInTrays from '../hooks/ComputeStatsSeedsInTrays';
+import ComputeStatsSeedsInTrays from '../tools/ComputeStatsSeedsInTrays';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 
-const GenerateColors = (numColors) => {
+export const GenerateColors = (numColors) => {
     const baseHue = 0; // Starting hue value (0-360)
     const saturation = 80; // Saturation value (0-100)
     const lightness = 60; // Lightness value (0-100)

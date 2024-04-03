@@ -32,7 +32,7 @@ const fetchDataAndUpdateContext = async (endpoint, contextSetter) => {
     return data;
 };
 
-const ContextDataManager = () => {
+export const ContextDataManager = () => {
     const { appTrays, setAppTrays, appSeeds, setAppSeeds } = useContext(AppDataSharingContext);
     const [dataFetched, setDataFetched] = useState(false);
 
