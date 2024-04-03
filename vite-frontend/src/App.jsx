@@ -8,7 +8,7 @@ import CreateTray from "./pages/CreateTray.jsx"
 import EditTray from "./pages/EditTray.jsx"
 import DeleteTray from "./pages/DeleteTray.jsx"
 import DeleteSlot from "./pages/DeleteSlot.jsx"
-import Home from "./pages/NewHome.jsx"
+import Home from "./pages/Home.jsx"
 import TrayComponent from './pages/TrayComponent.jsx'
 import CreateMood from './components/home/CreateMood.jsx'
 import CreateKeyword from './components/home/CreateKeyWord.jsx'
