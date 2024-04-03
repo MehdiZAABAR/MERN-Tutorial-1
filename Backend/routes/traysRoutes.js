@@ -1,5 +1,5 @@
 import express from "express"
-import { Tray, Slot, ValidateTrayData, objId } from "../models/observations_model.js"
+import { Tray, Slot, ValidateTrayData, objId } from "../models/all_collections_models.js"
 const router = express.Router();
 
 //Route for saving a new tray

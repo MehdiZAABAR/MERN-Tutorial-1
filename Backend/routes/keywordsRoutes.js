@@ -1,5 +1,5 @@
 import express from "express"
-import {Keyword, ValidateKeyword} from "../models/observations_model.js"
+import {Keyword, ValidateKeyword} from "../models/all_collections_models.js"
 const router = express.Router();
 
 

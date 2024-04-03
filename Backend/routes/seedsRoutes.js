@@ -1,5 +1,5 @@
 import express from "express"
-import {Seed, ValidateSeedData} from "../models/seed_model.js"
+import {Seed, ValidateSeedData} from "../models/all_collections_models.js"
 const router = express.Router();
 
 //Route for saving a new seed

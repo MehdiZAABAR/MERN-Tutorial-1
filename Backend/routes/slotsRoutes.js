@@ -1,5 +1,5 @@
 import express from "express"
-import {Slot, ValidateSlotData} from "../models/observations_model.js"
+import {Slot, ValidateSlotData} from "../models/all_collections_models.js"
 const router = express.Router();
 
 /*

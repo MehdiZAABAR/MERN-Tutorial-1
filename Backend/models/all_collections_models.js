@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-import { Seed } from './seed_model.js'
 
-export const objId = mongoose.Types.ObjectId;
+export const objId = mongoose.Schema.Types.ObjectId;
 export const KeywordSchema = mongoose.Schema(
     {
         text: String,
@@ -112,23 +111,30 @@ export const Operation = mongoose.model('Operation', OperationSchema);
 
 
 // Schema for the Reservoir (incorporating properties of the solution)
-const ReservoirSchema = new mongoose.Schema({
+export const ReservoirSchema = new mongoose.Schema({
     maxVolume: { type: Number, required: true },
     availableVolume: { type: Number, required: true },
     pH: { type: Number },
     tds: { type: Number },
     nutrients: { type: String }, // Nutrients added by the user
     freshWaterAdded: { type: Number }, // Volume of fresh water added by the user
-    lastRefreshDate: { type: Date } // Date when the solution was last refreshed
+    lastFlush: { type: Date } // Date when the solution was last flushed
+
+    //This is not good, That's a mix between solution properties an dphysical Reservoir.
   });
   
   export const Reservoir = mongoose.model('Reservoir', ReservoirSchema);
   // Schema for the Growing Unit
-  const GrowingUnitSchema = new mongoose.Schema({
+  export const GrowingUnitSchema = new mongoose.Schema({
+    propId: {
+        type: String,
+        required: true
+    },
     name: { type: String, required: true },
+    type: {type: String, required:true},    // Soil less, Hydroponic, Soil
+    geometry: { type: String},
     area: { type: Number },
     maxNumberOfSlots: { type: Number },
-    maxInternalWaterVolume: { type: Number },
     purchaseDate: { type: Date },
     serialNumber: { type: String },
     reservoir: { type: mongoose.Schema.Types.ObjectId, ref: 'Reservoir' }
@@ -176,4 +182,120 @@ export function ValidateKeyword(obj) {
 
 
     return true;
+}
+export function ValidateGUData(obj) {
+
+
+
+
+    return true;
+}
+export function ValidateReservoirData(obj) {
+
+
+
+
+    return true;
+}
+export const phase = mongoose.Schema({ 
+    start: {
+        type : Number,
+        Min: 1,
+        Max: 12
+        }, 
+    end: {    
+        type : Number,
+        Min: 1,
+        Max: 12
+    },
+});
+export const SeedSchema = mongoose.Schema( 
+    {
+        propId: {
+            type: String,
+            required: true
+        },
+        plantType: {
+            type: String,
+            required: true
+        },
+        easyName: {
+            type: String,
+            required: true
+        }, 
+        botanicName: {
+            type: String,
+            required: true
+        },
+        variety: {
+            type: String,
+            required: true
+        }, 
+        culturePeriods:{
+            germination : 
+            {
+                type: phase,
+                required: true,
+                _id:false
+            },
+            transfer : 
+            {
+                type: phase,
+                required: true,
+                _id:false
+            },
+            harvesting : 
+            {
+                type: phase,
+                required: true,
+                _id:false
+            },
+        },
+        shop:
+        {
+            type: String,
+            required: true           
+        },
+        brand:
+        {
+            type: String,
+            required: true           
+        },
+        shoppingDate:
+        {
+            type: Date,
+            required: true           
+        },
+        productionDate:
+        {
+            type: Date,
+        },
+        endOfValidity:
+        {
+            type: Date,
+        },
+        origin:
+        {
+            type: String,
+            required: true           
+        },
+        quantity:
+        {
+            type: Number,
+            Min:1           
+        }
+    },
+    {
+        timestamps: true,
+    });
+export const Seed = mongoose.model( 'Seed', SeedSchema );
+
+export function ValidateSeedData( obj)
+//obj = request.body
+{
+    if( ( !obj.easyName) || (!obj.plantType) || (!obj.variety))
+        {
+            return false;
+        }
+  return true;
 }

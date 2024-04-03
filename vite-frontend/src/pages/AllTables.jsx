@@ -1,21 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ListComponent from '../components/home/ListComponent';
 import useDataFetching from '../hooks/useDataFetching';
 import { AiFillCamera, AiOutlineEdit } from 'react-icons/ai';
 import { BsInfoCircle } from 'react-icons/bs';
 import { MdOutlinePreview, MdOutlineDelete } from 'react-icons/md';
-import { TfiCommentsSmiley } from 'react-icons/tfi'
 import CreateTraysSlots from '../components/home/CreateTraysSlots'
-import { PiPianoKeysFill } from 'react-icons/pi'
-import GetEditAnyRecord from './GetEditAnyRecord';
 import { useState } from 'react';
-import ModalForm from './ModalForm';
-import { enqueueSnackbar } from 'notistack';
-import * as Schemas from '../components/home/SchemasForFrontEnd'
+import * as Schemas from '../../../Backend/models/all_collections_models'
 import { onEditClick } from '../components/home/onEditClickComponent';
-import DebugListComponent from '../components/utils/DebugListComponent';
-import Spinner from '../components/Spinner';
 import ShowTables from '../pages/ShowTables'
 import BackButton from '../components/BackButton';
 
@@ -24,6 +16,29 @@ const AllTables = () => {
     const [showModal, setModal] = useState(false);
 
     const dataSources = [
+        {
+            title: 'Reservoirs',
+            schema: Schemas.ReservoirSchema,
+            data: useDataFetching('Reservoirs'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => ((
+                <>
+                    <th className='border border-slate-600 rounded-md' onClick={() => handleSort('maxVolume')}>Max Vol</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Av. Vol</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('nutrients')}>Nutrients</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('lastFlush')}>Last Flush</th>
+                </>
+            )),
+            renderItem: (item, dataSource) => (
+                <>
+                    <td className="border border-slate-600 rounded-md"  >{item.maxVolume}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.availableVolume}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.nutrients}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.lastFlush}</td>
+
+                </>
+            )
+        },
         {
             title: 'Trays',
             schema: Schemas.TraysSchema,

@@ -1,20 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import ListComponent from '../components/home/ListComponent';
-import useDataFetching from '../hooks/useDataFetching';
-import { AiFillCamera, AiOutlineEdit } from 'react-icons/ai';
-import { BsInfoCircle } from 'react-icons/bs';
-import { MdOutlinePreview, MdOutlineDelete } from 'react-icons/md';
-import { TfiCommentsSmiley } from 'react-icons/tfi'
-import CreateTraysSlots from '../components/home/CreateTraysSlots'
-import { PiPianoKeysFill } from 'react-icons/pi'
-import GetEditAnyRecord from './GetEditAnyRecord';
-import { useState } from 'react';
 import ModalForm from './ModalForm';
-import { enqueueSnackbar } from 'notistack';
-import * as Schemas from '../components/home/SchemasForFrontEnd'
-import { onEditClick } from '../components/home/onEditClickComponent';
-import DebugListComponent from '../components/utils/DebugListComponent';
 import Spinner from '../components/Spinner';
 
 const ShowTables = ( {pageTitle, dataSources, showModal, setModal, modalContent}) => {

@@ -1,203 +1,153 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Spinner from '../components/Spinner';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { MdOutlineAddBox } from 'react-icons/md';
-import { TbLayoutNavbarCollapseFilled, TbLayoutNavbarExpandFilled } from 'react-icons/tb';
-import BackendURL from '../components/BackendURL';
-import SeedsTable from '../components/home/SeedsTable';
-import SeedsCard from '../components/home/SeedsCard';
-import TraysTable from '../components/home/TraysTable';
-import TraysCard from '../components/home/TraysCard';
-import SlotsTable from '../components/home/SlotsTable';
-import ListComponent from '../components/home/List';
 import useDataFetching from '../hooks/useDataFetching';
+import { AiFillCamera, AiOutlineEdit } from 'react-icons/ai';
+import { BsInfoCircle } from 'react-icons/bs';
+import { MdOutlinePreview, MdOutlineDelete } from 'react-icons/md';
+import CreateTraysSlots from '../components/home/CreateTraysSlots'
+import { useState } from 'react';
+import * as Schemas from '../../../Backend/models/all_collections_models'
+import { onEditClick } from '../components/home/onEditClickComponent';
+import ShowTables from './ShowTables';
+import HomeContent from './HomeContent';
+import { SiAzuredataexplorer } from 'react-icons/si'
+import { ImStatsDots } from "react-icons/im";
+import { AppDataSharingContext } from '../App';
 
 const Home = () => {
-    const [seeds, setSeeds] = useState([]);
-    const [trays, setTrays] = useState([]);
-    const [slots, setSlots] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [displayType, setDisplayType] = useState('table');
-    const [seedTableCollapsed, setSeedTableCollapsed] = useState(false);
-    const [trayTableCollapsed, setTrayTableCollapsed] = useState(false);
-    const [slotTableCollapsed, setSlotTableCollapsed] = useState(false);
-    const [nbSlots, setNbSlots] = useState(0);
-    const [nbTrays, setNbTrays] = useState(0);
-    const [nbSeeds, setNbSeeds] = useState(0);
-    const { data: observations, loading: observationsLoading } = useDataFetching('Observations');
+    const [showModal, setModal] = useState(false);
+    const [modalContent, setModalContent] = useState('');
+    const { appTrays, setAppTrays, appSeeds, setAppSeeds } = useContext(AppDataSharingContext);
 
-
-    const toggleSeedTable = () => {
-        const newState = !seedTableCollapsed;
-        setSeedTableCollapsed(newState);
-        sessionStorage.setItem('seedTableCollapsed', JSON.stringify(newState));
-    };
-
-    const toggleTrayTable = () => {
-        const newState = !trayTableCollapsed;
-        setTrayTableCollapsed(newState);
-        sessionStorage.setItem('trayTableCollapsed', JSON.stringify(newState));
-    };
-
-    const toggleSlotTable = () => {
-        const newState = !slotTableCollapsed;
-        setSlotTableCollapsed(newState);
-        sessionStorage.setItem('slotTableCollapsed', JSON.stringify(newState));
-    };
-    useEffect(() => {
-        const seedTableState = sessionStorage.getItem('seedTableCollapsed');
-        if (seedTableState) {
-            setSeedTableCollapsed(JSON.parse(seedTableState));
+    const dataSources = [
+        {
+            title: 'Trays',
+            schema: Schemas.TraysSchema,
+            data: useDataFetching('Trays', setAppTrays),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => (
+                <>
+                    <th className='border border-slate-600 rounded-md' onClick={() => handleSort('propId')}>ID</th>
+                    <th className='border border-slate-600 rounded-md' onClick={() => handleSort('used')}>Used</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Name</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('slotSize')}>Slot Size</th>
+                    <th className='border border-slate-600 rounded-md ' onClick={() => handleSort('nbRows')}>Nb of Row</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('nbCols')}>Nb of Cols</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Slots</th>
+                    <th className='border border-slate-600 rounded-md '>Operations</th>
+                </>
+            ),
+            renderItem: (tray) => (
+                < >
+                    <td className='border border-slate-700 rounded-md text-center'> {tray.propId}</td>
+                    <td className='border border-slate-700 rounded-md text-center'> {tray.used ? ("Used") : ("Free")}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{tray.easyName}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>{tray.slotSize}</td>
+                    <td className='border border-slate-700 rounded-md text-center '>{tray.nbRows}</td>
+                    <td className='border border-slate-700 rounded-md text-center '>{tray.nbCols}</td>
+                    <td className='border border-slate-700 rounded-md text-center max-md:hidden'>
+                        {tray.slots.length === tray.nbRows * tray.nbCols ? (
+                            <div className='flex justify-center gap-x-4 '>
+                                <Link to={`/trays/details/${tray._id}`}>
+                                    <MdOutlinePreview className='text-2xl text-green-800' />
+                                </Link>
+                                <Link to={`/trays/edit/${tray._id}`}>
+                                    <AiOutlineEdit className='text-2xl text-yellow-600' />
+                                </Link>
+                                <Link to={`/trays/delete/${tray._id}`}>
+                                    <MdOutlineDelete className='text-2xl text-red-600' />
+                                </Link>
+                                <Link to={`/trays/picture/${tray._id}`}>
+                                    <AiFillCamera className='text-2xl text-red-600' />
+                                </Link>
+                            </div>) : (<CreateTraysSlots tray={tray} />)
+                        }
+                    </td>
+                    <td className='border border-slate-700 rounded-md text-center '>
+                        <div className='flex justify-center gap-x-4 '>
+                            <Link to={`/trays/details/${tray._id}`}>
+                                <BsInfoCircle className='text-2xl text-green-800' />
+                            </Link>
+                            <Link to={`/trays/edit/${tray._id}`}>
+                                <AiOutlineEdit className='text-2xl text-yellow-600' />
+                            </Link>
+                            <Link to={`/trays/delete/${tray._id}`}>
+                                <MdOutlineDelete className='text-2xl text-red-600' />
+                            </Link>
+                            <Link to={`/trays/picture/${tray._id}`}>
+                                <AiFillCamera className='text-2xl text-red-600' />
+                            </Link>
+                        </div>
+                    </td>
+                </>
+            )
+        },
+        {
+            title: 'Seeds',
+            schema: Schemas.SeedSchema,
+            data: useDataFetching('Seeds', setAppSeeds),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => (
+                <>
+                    <th className="border border-slate-600 rounded-md" onClick={() => handleSort('propId')}>ID</th>
+                    <th className="border border-slate-600 rounded-md" onClick={() => handleSort('plantType')}>Type</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('easyName')}>Name</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('botanicName')}>Botanic Name</th>
+                    <th className="border border-slate-600 rounded-md" onClick={() => handleSort('variety')}>Variety</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('culturePeriods.germination.start')}>Germination Start</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('culturePeriods.germination.end')}>Germination End</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('culturePeriods.transfer.start')}>Transfer Start</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('culturePeriods.transfer.end')}>Transfer End</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('culturePeriods.harvesting.start')}>Harvest Start</th>
+                    <th className="border border-slate-600 rounded-md max-md:hidden" onClick={() => handleSort('culturePeriods.harvesting.end')}>Harvest End</th>
+                    <th className="border border-slate-600 rounded-md" onClick={() => handleSort('quantity')}>Quantity</th>
+                    <th className="border border-slate-600 rounded-md">Operations</th>
+                </>),
+            renderItem: (seed) => (
+                <>
+                    <td className="border border-slate-700 rounded-md text-center">{seed.propId}</td>
+                    <td className="border border-slate-700 rounded-md text-center">{seed.plantType}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.easyName}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.botanicName}</td>
+                    <td className="border border-slate-700 rounded-md text-center">{seed.variety}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.culturePeriods?.germination?.start}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.culturePeriods?.germination?.end}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.culturePeriods?.transfer?.start}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.culturePeriods?.transfer?.end}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.culturePeriods?.harvesting?.start}</td>
+                    <td className="border border-slate-700 rounded-md text-center max-md:hidden">{seed.culturePeriods?.harvesting?.end}</td>
+                    <td className="border border-slate-700 rounded-md text-center">{seed.quantity}</td>
+                    <td className="border border-slate-700 rounded-md text-center">
+                        <div className="flex justify-center gap-x-4">
+                            <Link to={`/seeds/Details/${seed._id}`}><BsInfoCircle className="text-2xl text-green-800" /></Link>
+                            <Link to={`/seeds/edit/${seed._id}`}><AiOutlineEdit className="text-2xl text-yellow-600" /></Link>
+                            <Link to={`/seeds/delete/${seed._id}`}><MdOutlineDelete className="text-2xl text-red-600" /></Link>
+                            <Link to={`/seeds/picture/${seed._id}`}><AiFillCamera className="text-2xl text-red-600" /></Link>
+                        </div>
+                    </td>
+                </>
+            )
         }
-    
-        const trayTableState = sessionStorage.getItem('trayTableCollapsed');
-        if (trayTableState) {
-            setTrayTableCollapsed(JSON.parse(trayTableState));
-        }
-    
-        const slotTableState = sessionStorage.getItem('slotTableCollapsed');
-        if (slotTableState) {
-            setSlotTableCollapsed(JSON.parse(slotTableState));
-        }
-    }, []);
-    useEffect(() => {
-        setLoading(true);
-        axios
-            .get(`${BackendURL}/Seeds`)
-            .then((response) => {
-                setSeeds(response.data.data);
-                setNbSeeds(response.data.count);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.log(error);
-                setLoading(false);
-            });
-        axios
-            .get(`${BackendURL}/Trays`)
-            .then((response) => {
-                setTrays(response.data.data);
-                setNbTrays(response.data.count);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.log(error);
-                setLoading(false);
-            });
-        axios
-            .get(`${BackendURL}/Slots`)
-            .then((response) => {
-                setSlots(response.data.data);
-                setNbSlots(response.data.count);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.log(error);
-                setLoading(false);
-            });
-    }, []);
+    ];
 
     return (
-        
-        <div className='p-4'>
-            <div className='flex justify-center items-center gap-x-4'>
-                <button className='bg-sky-300 hover:bg-sky-600 px-4 py-1 rounded-lg' onClick={() => setDisplayType('table')}>Table</button>
-                <button className='bg-sky-300 hover:bg-sky-600 px-4 py-1 rounded-lg' onClick={() => setDisplayType('card')}>Card</button>
+        <>
+            <HomeContent />
+            <div className="p-4 mb-8 flex justify-center items-center text-2xl my-4 text-green-800">
+                <Link to="/all" className="mx-4">
+                    <span title="Show all system tables">
+                        <SiAzuredataexplorer className="text-3xl text-green-800" />
+                    </span>
+                </Link>
+                <Link to="/Stats" className="mx-4">
+                    <span title="Statistics">
+                        <ImStatsDots className="text-3xl text-green-600" />
+                    </span>
+                </Link>
             </div>
-            <div>
-                 {/* Render Observations List */}
-      <ListComponent
-        title='Observations'
-        data={observations}
-        loading={observationsLoading}
-        renderItem={(observation) => (
-          <tr>
-            <td>{observation._id}</td><td>{observation._id}</td>
-          </tr>
-        )}
-      />
-            </div>
-            <div>
-                <div className='flex justify-between items-center'>
-                    <h2 className='text-2xl my-8'>Seeds List ({nbSeeds})</h2>
-                    <div className="flex items-center">
-                        {seedTableCollapsed ? (
-                            <TbLayoutNavbarExpandFilled className="text-gray-600 text-4xl cursor-pointer" onClick={toggleSeedTable} />
-                        ) : (
-                            <TbLayoutNavbarCollapseFilled className="text-gray-600 text-4xl cursor-pointer" onClick={toggleSeedTable} />
-                        )}
-                        <Link to='/seeds/create'>
-                            <MdOutlineAddBox className='text-sky-800 text-4xl' />
-                        </Link>
-                    </div>
-                </div>
-                {!seedTableCollapsed && (
-                    <>
-                        {loading ? (
-                            <Spinner />
-                        ) : (displayType === 'table' ? (
-                            <SeedsTable seeds={seeds} />
-                        ) : (
-                            <SeedsCard seeds={seeds} />
-                        ))}
-                    </>
-                )}
-            </div>
-            <div>
-                <div className='flex justify-between items-center'>
-                <h2 className='text-2xl my-8'>Trays List ({nbTrays})</h2>
-                    <div className="flex items-center">
-                        {trayTableCollapsed ? (
-                            <TbLayoutNavbarExpandFilled className="text-gray-600 text-4xl cursor-pointer" onClick={toggleTrayTable} />
-                        ) : (
-                            <TbLayoutNavbarCollapseFilled className="text-gray-600 text-4xl cursor-pointer" onClick={toggleTrayTable} />
-                        )}
-                        <Link to='/trays/create'>
-                            <MdOutlineAddBox className='text-sky-800 text-4xl' />
-                        </Link>
-                    </div>
-                </div>
-                {!trayTableCollapsed && (
-                    <>
-                        {loading ? (
-                            <Spinner />
-                        ) : (displayType === 'table' ? (
-                            <TraysTable trays={trays} />
-                        ) : (
-                            <TraysCard trays={trays} />
-                        ))}
-                    </>
-                )}
-            </div>
-            <div>
-                <div className='flex justify-between items-center'>
-                <h2 className='text-2xl my-8'>Slots List ({nbSlots})</h2>
-                    <div className="flex items-center">
-                        {slotTableCollapsed ? (
-                            <TbLayoutNavbarExpandFilled className="text-gray-600 text-4xl cursor-pointer" onClick={toggleSlotTable} />
-                        ) : (
-                            <TbLayoutNavbarCollapseFilled className="text-gray-600 text-4xl cursor-pointer" onClick={toggleSlotTable} />
-                        )}
-                        {/* <Link to='/slots/create'>
-                            <MdOutlineAddBox className='text-sky-800 text-4xl' />
-                        </Link> */}
-                    </div>
-                </div>
-                {!slotTableCollapsed && (
-                    <>
-                        {loading ? (
-                            <Spinner />
-                        ) : (displayType === 'table' ? (
-                            <SlotsTable slots={slots} />
-                        ) : (
-                            <TraysCard trays={trays} />
-                        ))}
-                    </>
-                )}
-            </div>
-        </div>
+            <ShowTables pageTitle="Manage your system" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
+
+        </>
     );
 };
-
 export default Home;

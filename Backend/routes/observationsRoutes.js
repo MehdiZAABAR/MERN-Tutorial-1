@@ -1,5 +1,5 @@
 import express from "express"
-import {Observation, ValidateObservationData} from "../models/observations_model.js"
+import {Observation, ValidateObservationData} from "../models/all_collections_models.js"
 const router = express.Router();
 
 // export const ObservationSchema = mongoose.Schema(

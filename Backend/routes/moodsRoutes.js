@@ -1,5 +1,5 @@
 import express from "express"
-import { Mood, ValidateMoodData } from "../models/observations_model.js"
+import { Mood, ValidateMoodData } from "../models/all_collections_models.js"
 const router = express.Router();
 
 // export const MoodSchema = mongoose.Schema(
