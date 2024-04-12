@@ -52,7 +52,7 @@ const EmojiSelect = ({selectedEmoji, setSelectedEmoji}) => {
         options={emojis}
         components={{ Option }} // Use the custom Option component
         formatOptionLabel={emoji => (
-            <div className="emoji-option">
+            <div className="emoji-option" style={{ display: 'flex', alignItems: 'center' }}>
               <img src={emoji.image} alt={emoji.label} style={{ marginRight: '8px', width: '84px', height: '84px' }}/>
               <span>{emoji.label}</span>
             </div>

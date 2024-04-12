@@ -15,7 +15,7 @@ const ComputeStatsSeedsInTrays = async (Tray, Seeds) => {
 
     if (!Tray || !Tray._id || !Seeds || Seeds.length < 1) {
         trayStats.error = 'Invalid Tray or Seeds data';
-        console.log('Invalid Tray or Seeds data' );
+        // console.log('Invalid Tray or Seeds data' );
         return trayStats;
     }
 

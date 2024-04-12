@@ -85,7 +85,6 @@ const Stats = () => {
             });
             //let chSz = Math.min(1 + Math.ceil((trayStats.traySeeds?.length || 0) / 8), 3);
             let chSz = Math.min(3 + Math.ceil((trayStats.traySeeds?.length || 0) / 14), 12);
-            console.log(`charsz =${chSz}`);
             setCharSize(`w-${chSz}/12`);
         })();
 

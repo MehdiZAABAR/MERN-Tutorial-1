@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
 export const objId = mongoose.Schema.Types.ObjectId;
-export const KeywordSchema = mongoose.Schema(
-    {
-        text: String,
-    }
-);
+export const KeywordSchema = mongoose.Schema({
+    text: String,
+    categoryId: Number,
+    category:String,
+    priority: Number,
+    tooltip: String
+});
 export const Keyword = mongoose.model('Keyword', KeywordSchema);
 
 export const MoodSchema = mongoose.Schema(
@@ -30,7 +32,7 @@ export const SlotSchema = mongoose.Schema(
         trayRow: Number,
         trayCol: Number,
         seedlingTray: { type: objId, ref: 'Tray' },
-        growingSystem: String,
+        growingSystem: { type: objId, ref: 'GrowingUnit' },
         sz:String
     }
 );
@@ -75,18 +77,7 @@ export const TraysSchema = mongoose.Schema(
         timestamps: true,
     });
 export const Tray = mongoose.model('Tray', TraysSchema);
-export const ObservationSchema = mongoose.Schema(
-    {
-        date: Date,
-        trays: [{ type: objId, ref: 'Tray' }],
-        slots: [{ type: objId, ref: 'Slot' }],
-        photos: [objId],
-        text: String,
-        keywords: [{ type: objId, ref: 'Keyword' }],
-        mood: [{ type: objId, ref: 'Mood' }]
-    }
-);
-export const Observation = mongoose.model('Observation', ObservationSchema);
+
 
 const OperationTypeSchema = new mongoose.Schema({
     name: { type: String, required: true }, // Name of the operation type (e.g., "Slot Maintenance", "Reservoir Refill")
@@ -135,6 +126,8 @@ export const ReservoirSchema = new mongoose.Schema({
     geometry: { type: String},
     area: { type: Number },
     maxNumberOfSlots: { type: Number },
+    nbRows: { type: Number},
+    nbCols: { type: Number},
     purchaseDate: { type: Date },
     serialNumber: { type: String },
     reservoir: { type: mongoose.Schema.Types.ObjectId, ref: 'Reservoir' }
@@ -142,7 +135,19 @@ export const ReservoirSchema = new mongoose.Schema({
 
   export const GrowingUnit = mongoose.model('GrowingUnit', GrowingUnitSchema);
 
-
+export const ObservationSchema = mongoose.Schema(
+    {
+        date: Date,
+        trays: [{ type: objId, ref: 'Tray' }],
+        slots: [{ type: objId, ref: 'Slot' }],
+        growingUnits: [{ type: objId, ref: 'GrowingUnit' }],
+        photos: [objId],
+        text: String,
+        keywords: [String],
+        mood: String
+    }
+);
+export const Observation = mongoose.model('Observation', ObservationSchema);
 export function ValidateTrayData(obj) {
     if ((!obj.propId) || (!obj.nbRows) || (!obj.nbCols) || (!obj.easyName)) {
         return false;

@@ -8,7 +8,7 @@ import observationsRouter from "./routes/observationsRoutes.js"
 import moodsRouter from "./routes/moodsRoutes.js"
 import kwRouter from "./routes/keywordsRoutes.js"
 import cors from "cors"
-import { Reservoir, ReservoirSchema, ValidateReservoirData } from "./models/all_collections_models.js";
+import { GrowingUnit, GrowingUnitSchema, ValidateGUData, Reservoir, ReservoirSchema, ValidateReservoirData } from "./models/all_collections_models.js";
 import {CreateCRUDRoutes} from "./routes/CreateRoutes.js"
 const logRequests = (req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -34,7 +34,9 @@ app.use( cors());
 //Generic CRUD routes for a collection defined by its mongoose Schema and Model
 const reservoirRouter = express.Router();
 CreateCRUDRoutes(reservoirRouter, Reservoir, ReservoirSchema, ValidateReservoirData, "Reservoir");
-
+//Generic CRUD routes for a collection defined by its mongoose Schema and Model
+const growingUnitsRouter = express.Router();
+CreateCRUDRoutes(growingUnitsRouter, GrowingUnit, GrowingUnitSchema, ValidateGUData, "Growing Unit");
 
 
 app.get( '/', (request, response) => {
@@ -49,7 +51,7 @@ app.use( '/observations', observationsRouter);
 app.use( '/moods', moodsRouter);
 app.use( '/keywords', kwRouter);
 app.use( '/reservoirs', reservoirRouter);
-
+app.use( '/growingunits', growingUnitsRouter);
 
 // app.use( '/operations', operationsRouter);
 // app.use( '/culturePlatforms', platformsRouter);

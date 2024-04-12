@@ -29,8 +29,8 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
   const { enqueueSnackbar } = useSnackbar();
 
 
-  // console.log( `Slots = ${JSON.stringify(slots)} selectedSlots = ${JSON.stringify(selectedSlots)} \
-  // trayId = ${trayId} rowIndex ${rowIndex} colIndex ${colIndex}`)
+  //  console.log( `selectedSlots = ${JSON.stringify(selectedSlots)} \
+  //  trayId = ${trayId} rowIndex ${rowIndex} colIndex ${colIndex}`, {variant:'Success'});
 
   useEffect(() => {
     // Find the slot corresponding to the given row and column indices
@@ -198,6 +198,17 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
     setModalContent(content);
   }
 
+
+  const HandleAddObservation = () => {
+    let selection = [...selectedSlots];
+    if ((selection.length >= 1) && !(selection.includes(slot._id))) {
+      enqueueSnackbar(`Cancel selection first !`, { variant: 'error' });
+      return;
+    }
+    if (selection.length == 0) selection.push(slot._id);
+    showModalContent(<AddObservationForm slots={slots} selectedSlots={selection} seed={seed} trayId={trayId} onClose={ () => { setShowModal(false); selection=[]}}/>);
+  }
+
   const HandleDeleteManySlots = () => {
     if ((selectedSlots.length >= 1) && !(selectedSlots.includes(slot._id))) {
       enqueueSnackbar(`Cancel selection first`, { variant: 'error' });
@@ -243,8 +254,8 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
                 <GiPlantWatering className='text-2xl text-black hover:text-green-200' onClick={() => { showModalContent(<AddCareForm slot={slot} seed={seed} />); }} />
               </div>
               <div title="+ Observation">
-                <BsDatabaseAdd className='text-2xl text-black hover:text-white' onClick={() => { showModalContent(<AddObservationForm slot={slot} seed={seed} />); }} />
-              </div>
+                <BsDatabaseAdd className='text-2xl text-black hover:text-white' onClick={HandleAddObservation}/>
+                              </div>
               <div title="Status">
                 <GiMicroscope className='text-2xl text-black hover:text-white' onClick={() => { showModalContent(<SlotAndPlantStatus slot={slot} seed={seed} />); }} />
               </div>

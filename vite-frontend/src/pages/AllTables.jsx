@@ -1,7 +1,7 @@
-import React from 'react';
+import { React, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useDataFetching from '../hooks/useDataFetching';
-import { AiFillCamera, AiOutlineEdit } from 'react-icons/ai';
+import { AiFillCamera, AiOutlineEdit, AiOutlineQuestionCircle } from 'react-icons/ai';
 import { BsInfoCircle } from 'react-icons/bs';
 import { MdOutlinePreview, MdOutlineDelete } from 'react-icons/md';
 import CreateTraysSlots from '../components/home/CreateTraysSlots'
@@ -10,12 +10,61 @@ import * as Schemas from '../../../Backend/models/all_collections_models'
 import { onEditClick } from '../components/home/onEditClickComponent';
 import ShowTables from '../pages/ShowTables'
 import BackButton from '../components/BackButton';
+import { AppDataSharingContext } from '../App'
+import ContextDataManager from '../components/utils/ContextDataManager';
+import ObservationMood from '../components/utils/ObservationMood';
 
 const AllTables = () => {
+    const { appMoods } = useContext(AppDataSharingContext);
     const [modalContent, setModalContent] = useState('');
     const [showModal, setModal] = useState(false);
-
+    // useEffect(() => {
+    //     console.log('appMoods:', appMoods);
+    // }, [appMoods]); // Run this effect whenever appMoods changes
     const dataSources = [
+        {
+            title: 'GrowingUnits',
+            schema: Schemas.GrowingUnitSchema,
+            data: useDataFetching('GrowingUnits'),
+            onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
+            renderHeader: (handleSort) => ((
+                <>
+                    <th className='border border-slate-600 rounded-md' onClick={() => handleSort('type')}>Medium Type</th>
+                    <th className='border border-slate-600 rounded-md'>ID</th>
+                    <th className='border border-slate-600 rounded-md'>Name</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('Area')}>Area</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('maxNumberOfSlots')}>Max Slots</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden'>Geometry</th>
+                    <th className='border border-slate-600 rounded-md '>Operations</th>
+                </>
+            )),
+            renderItem: (item, dataSource) => (
+                <>
+                    <td className="border border-slate-600 rounded-md"  >{item.type}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.propId}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.name}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.area}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.maxNumberOfSlots}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.geometry}</td>
+                    <td className='border border-slate-700 rounded-md text-center '>
+                        <div className='flex justify-center gap-x-4 '>
+                            <Link to={`/GrowingUnits/details/${item._id}`}>
+                                <BsInfoCircle className='text-2xl text-green-800' />
+                            </Link>
+                            <Link to={`/GrowingUnits/edit/${item._id}`}>
+                                <AiOutlineEdit className='text-2xl text-yellow-600' />
+                            </Link>
+                            <Link to={`/GrowingUnits/delete/${item._id}`}>
+                                <MdOutlineDelete className='text-2xl text-red-600' />
+                            </Link>
+                            <Link to={`/GrowingUnits/picture/${item._id}`}>
+                                <AiFillCamera className='text-2xl text-red-600' />
+                            </Link>
+                        </div>
+                    </td>
+                </>
+            )
+        },
         {
             title: 'Reservoirs',
             schema: Schemas.ReservoirSchema,
@@ -50,8 +99,8 @@ const AllTables = () => {
                     <th className='border border-slate-600 rounded-md' onClick={() => handleSort('used')}>Used</th>
                     <th className='border border-slate-600 rounded-md max-md:hidden'>Name</th>
                     <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('slotSize')}>Slot Size</th>
-                    <th className='border border-slate-600 rounded-md 'onClick={() => handleSort('nbRows')}>Nb of Row</th>
-                    <th className='border border-slate-600 rounded-md max-md:hidden'onClick={() => handleSort('nbCols')}>Nb of Cols</th>
+                    <th className='border border-slate-600 rounded-md ' onClick={() => handleSort('nbRows')}>Nb of Row</th>
+                    <th className='border border-slate-600 rounded-md max-md:hidden' onClick={() => handleSort('nbCols')}>Nb of Cols</th>
                     <th className='border border-slate-600 rounded-md max-md:hidden'>Slots</th>
                     <th className='border border-slate-600 rounded-md '>Operations</th>
                 </>
@@ -108,12 +157,19 @@ const AllTables = () => {
             onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
             renderHeader: (handleSort) => ((
                 <>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('category')}>Category</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('categoryId')}>Category ID</th>
                     <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('text')}>Text</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('priority')}>Priority</th>
+
                 </>
             )),
             renderItem: (item, dataSource) => (
                 <>
+                    <td className="border border-slate-600 rounded-md"  >{item.category}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.categoryId}</td>
                     <td className="border border-slate-600 rounded-md"  >{item.text}</td>
+                    <td className="border border-slate-600 rounded-md"  >{item.priority}</td>
                 </>
             )
         },
@@ -144,16 +200,24 @@ const AllTables = () => {
             onEditClick: (item, dataSource) => onEditClick(item, dataSource, setModalContent, setModal),
             renderHeader: (handleSort) => ((
                 <>
-                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('text')}>Text</th>
                     <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('date')}>Date</th>
-                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('Tray')}>Tray</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('mood')}>Mood</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('keywords')}>Keywords</th>
+                    <th className="border border-slate-600 rounded-md text-center" onClick={() => handleSort('text')}>Text</th>
+                    <th className="border border-slate-600 rounded-md text-center" >Slots</th>
                 </>
             )),
             renderItem: (item, dataSource) => (
                 <>
-                    <td className="border border-slate-600 rounded-md"  >{item.text}</td>
-                    <td className="border border-slate-600 rounded-md text-center">{item.date}</td>
-                    <td className="border border-slate-600 rounded-md ">{item.trays}</td>
+                    <td className="border border-slate-600 rounded-md text-center">{new Date(item.date).toLocaleDateString('fr-FR')}</td>
+                    <td className="border border-slate-600 rounded-md text-center">
+                        <ObservationMood item={item} appMoods={appMoods} />
+                    </td>
+                    <td className="border border-slate-600 rounded-md">
+                        {item.keywords.join(', ')}
+                    </td>
+                    <td className="border border-slate-600 rounded-md">{item.text}</td>
+                    <td className="border border-slate-600 rounded-md">{item.slots.join(', ')}</td>
                 </>
             )
         },
@@ -246,8 +310,9 @@ const AllTables = () => {
 
     return (
         <>
-        <BackButton/>
-        <ShowTables pageTitle = "All System Tables" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
+            <BackButton />
+            <ContextDataManager />
+            <ShowTables pageTitle="All System Tables" dataSources={dataSources} showModal={showModal} setModal={setModal} modalContent={modalContent}></ShowTables>
         </>
     );
 };

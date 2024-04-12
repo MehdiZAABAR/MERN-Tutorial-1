@@ -33,7 +33,7 @@ const fetchDataAndUpdateContext = async (endpoint, contextSetter) => {
 };
 
 export const ContextDataManager = () => {
-    const { appTrays, setAppTrays, appSeeds, setAppSeeds } = useContext(AppDataSharingContext);
+    const { appTrays, setAppTrays, appSeeds, setAppSeeds, appGrowingUnits, setAppGrowingUnits, appMoods, setAppMoods, appKeywords, setAppKeywords } = useContext(AppDataSharingContext);
     const [dataFetched, setDataFetched] = useState(false);
 
     useEffect(() => {
@@ -46,11 +46,23 @@ export const ContextDataManager = () => {
                 await fetchDataAndUpdateContext('Seeds', setAppSeeds);
                 setDataFetched(true);
             }
+            if (!appGrowingUnits || appGrowingUnits?.length === 0) {
+                await fetchDataAndUpdateContext('GrowingUnits', setAppGrowingUnits);
+                setDataFetched(true);
+            }
+            if (!appMoods || appMoods?.length === 0) {
+                await fetchDataAndUpdateContext('Moods', setAppMoods);
+                setDataFetched(true);
+            }
+            if (!appKeywords || appKeywords?.length === 0) {
+                await fetchDataAndUpdateContext('Keywords', setAppKeywords);
+                setDataFetched(true);
+            }
         };
         if (!dataFetched) {
             getTheData();
         }
-    }, [appTrays, setAppTrays, dataFetched]);
+    }, [appTrays, appSeeds, appGrowingUnits, appMoods, appKeywords, dataFetched]);
     // useEffect(() => {
     //         console.log('Updated appTrays:', appTrays);
     //         console.log('Updated appSeeds:', appSeeds);

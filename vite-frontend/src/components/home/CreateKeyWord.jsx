@@ -18,7 +18,7 @@ const CreateKeyword = () => {
       .post(`${BackendURL}/keywords`, data)
       .then(() => {
         enqueueSnackbar('Keyword created successfully!', { variant: 'success' });
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => {
         console.error(error);

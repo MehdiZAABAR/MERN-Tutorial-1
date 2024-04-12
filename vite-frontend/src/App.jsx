@@ -15,17 +15,19 @@ import CreateKeyword from './components/home/CreateKeyWord.jsx'
 import Stats from './pages/Stats.jsx'
 import AllTables from './pages/AllTables.jsx'
 import CreateAnyRecord from './pages/CreateAnyRecord.jsx'
-import { ReservoirSchema, Reservoir } from '../../Backend/models/all_collections_models.js'
+import { ReservoirSchema, Reservoir, GrowingUnitSchema } from '../../Backend/models/all_collections_models.js'
 
 export const AppDataSharingContext = createContext();
 
 const App = () => {
   const [appTrays, setAppTrays] = useState(null);
   const [appSeeds, setAppSeeds] = useState(null);
-  const [appGrowingSystems, setAppGrowingSystems] = useState(null);
-  
+  const [appGrowingUnits, setAppGrowingUnits] = useState(null);
+  const [appMoods, setAppMoods] = useState(null);
+  const [appKeywords, setAppKeywords] = useState(null);
+
   return (
-    <AppDataSharingContext.Provider value={{ appTrays, setAppTrays, appSeeds, setAppSeeds, appGrowingSystems, setAppGrowingSystems }}>
+    <AppDataSharingContext.Provider value={{ appTrays, setAppTrays, appSeeds, setAppSeeds, appGrowingUnits, setAppGrowingUnits, appMoods, setAppMoods, appKeywords, setAppKeywords }}>
     <Routes>
       <Route path='/' element={<Home/>} />
       <Route path='/All' element={<AllTables/>} />
@@ -44,7 +46,9 @@ const App = () => {
       <Route path='/Slots/Delete/:id' element={<DeleteSlot/>} />
       <Route path='/Moods/Create' element={<CreateMood/>} />
       <Route path='/Keywords/Create' element={<CreateKeyword/>} />
-      <Route path='/Reservoirs/Create' element={<CreateAnyRecord collectionName={'Reservoirs'} recordSchema={ReservoirSchema} onSubmit={ (item) => { console.log( `on Submit of the item ${JSON.stringify(item)}`)}} onClose={( ) => {console.log( 'Besslama')}}/>} />
+      <Route path='/Reservoirs/Create' element={<CreateAnyRecord collectionName={'Reservoirs'} recordSchema={ReservoirSchema} onSubmit={ (item) => { console.log( `on Submit of the item ${JSON.stringify(item)}`)}} onClose={( ) => {console.log( 'Done')}}/>} />
+      <Route path='/GrowingUnits/Create' element={<CreateAnyRecord collectionName={'GrowingUnits'} recordSchema={GrowingUnitSchema} onSubmit={ (item) => { console.log( `on Submit of the item ${JSON.stringify(item)}`)}} onClose={( ) => {console.log( 'Done')}}/>} />
+
     </Routes>
     </AppDataSharingContext.Provider>
 
