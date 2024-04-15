@@ -16,9 +16,10 @@ const router = express.Router();
 //Route for saving a new record
 router.post('/', async (request, response) => {
     try {
-        //Just a quick validation of the inputs, rework it later
+        console.log( "Slot post")
         if( !ValidateSlotData( request.body))
             return response.status(400).send( "Post all required slot fields");
+        console.log( "growingsystem", request.body.growingSystem);
          const newRecord = {
             used: request.body.used,
             name: request.body.name,

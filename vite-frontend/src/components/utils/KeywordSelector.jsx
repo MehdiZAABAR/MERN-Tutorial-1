@@ -1,20 +1,31 @@
+import { enqueueSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
-
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 export const KeywordButton = ({ keyword, onClick, selected, showHelp }) => {
   return (
+    <>
     <button
       onClick={(e) => {
         e.preventDefault(); // Prevent form submission
-        if( showHelp)
-          console.log( "tooltip data", keyword.tooltip);
+        if (showHelp ) {
+          // if (keyword.tooltip)
+          // enqueueSnackbar(`${keyword.text}: ${keyword.tooltip}`, {variant:'info'});
+        }
         else
           onClick(); // Call the onClick function passed from the parent
       }}
       className={`rounded-md px-2 py-1 mx-1 border ${selected ? 'bg-blue-500 text-white' : 'border-gray-300'}`}
       title={keyword.tooltip} // Add tooltip using the description property of the keyword 
-      >
+    >
       {keyword.text}
     </button>
+    <Snackbar open={showHelp && keyword.tooltip} autoHideDuration={6000}>
+        <MuiAlert elevation={6} variant="filled" severity="info">
+          {keyword.tooltip}
+        </MuiAlert>
+      </Snackbar>
+    </>
   );
 };
 

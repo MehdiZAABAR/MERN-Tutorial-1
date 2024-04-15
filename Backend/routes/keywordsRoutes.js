@@ -10,7 +10,11 @@ router.post('/', async (request, response) => {
         if( !ValidateKeyword( request.body))
             return response.status(400).send( "Invalid Keyword ");
          const newRecord = {
-            text : request.body.text
+            text : request.body.text,
+            categoryId : request.body.categoryId,
+            category : request.body.category,
+            priority : request.body.priority,
+            tooltip : request.body.tooltip
             };
         const mRecord = await Keyword.create( newRecord);
         return response.status(201).send(mRecord);

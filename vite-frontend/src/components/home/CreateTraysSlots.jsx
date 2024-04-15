@@ -10,18 +10,7 @@ const CreateTraysSlots = ({ tray }) => {
     const navigate = useNavigate();
     const {enqueueSnackbar} = useSnackbar();
     const HandleCreateSlots = async (id, name, rows, cols, sz) => {
-
         var data = {
-            /* 
-                    used:Boolean,
-                    seed: { type: objId, ref: 'SeedSchema' },
-                    startDate: Date,
-                    trayRow: Number,
-                    trayCol: Number,
-                    seedlingTray: { type: objId, ref: 'TraySchema' },
-                    growingSystem: String,
-                    size:String
-            */
             used: Boolean,
             seed: String,
             startDate: Date,
@@ -31,6 +20,7 @@ const CreateTraysSlots = ({ tray }) => {
             growingSystem: String,
             sz: String
         };
+        console.log( "Create Tray slots ", data);
         data.used = false;
         data.seedlingTray = id;
         data.sz = sz;
@@ -46,7 +36,6 @@ const CreateTraysSlots = ({ tray }) => {
                     })
                     .catch((error) => {
                         console.log(error);
-                        //alert('An error happened while creating the record ! Check console');
                         alert('An error happened while creating the record ! Check console');
                     });
 

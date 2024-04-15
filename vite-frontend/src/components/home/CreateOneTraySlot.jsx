@@ -24,7 +24,7 @@ const CreateOneTraySlot = ({ trayId, row, col , onCreateSlot }) => {
                 trayRow: row,
                 trayCol: col,
                 seedlingTray: trayId,
-                growingSystem: '',
+                growingSystem: null,
                 sz: trayResponse.data.slotSize,
                 name: `${trayResponse.data.easyName}_${toLetters(col)}.${row + 1}`
             };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdOutlineAddBox, MdOutlineEdit, MdOutlineDelete } from 'react-icons/md';
+import { MdOutlineAddBox, MdOutlineEdit, MdOutlineDelete, MdOutlineCleaningServices } from 'react-icons/md';
 import { TbLayoutNavbarCollapseFilled, TbLayoutNavbarExpandFilled } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 import Spinner from '../Spinner';
@@ -86,6 +86,9 @@ const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, o
           )}
           <Link to={`/${title.toLowerCase()}/create`}>
             <MdOutlineAddBox className='text-sky-800 text-4xl' />
+          </Link>
+          <Link to={`/${title.toLowerCase()}/clean`}>
+            <MdOutlineCleaningServices className='text-sky-800 text-4xl' />
           </Link>
         </div>
       </div>

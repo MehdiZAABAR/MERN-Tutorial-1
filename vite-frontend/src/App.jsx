@@ -11,11 +11,10 @@ import DeleteSlot from "./pages/DeleteSlot.jsx"
 import Home from "./pages/Home.jsx"
 import TrayComponent from './pages/TrayComponent.jsx'
 import CreateMood from './components/home/CreateMood.jsx'
-import CreateKeyword from './components/home/CreateKeyWord.jsx'
 import Stats from './pages/Stats.jsx'
 import AllTables from './pages/AllTables.jsx'
-import CreateAnyRecord from './pages/CreateAnyRecord.jsx'
-import { ReservoirSchema, Reservoir, GrowingUnitSchema } from '../../Backend/models/all_collections_models.js'
+import PrepareAnyRecordCreation  from './pages/CreateAnyRecord.jsx'
+import { ReservoirSchema, GrowingUnitSchema, KeywordSchema } from '../../Backend/models/all_collections_models.js'
 
 export const AppDataSharingContext = createContext();
 
@@ -45,10 +44,8 @@ const App = () => {
       <Route path='/Slots/Edit/:id' element={<EditTray/>} />
       <Route path='/Slots/Delete/:id' element={<DeleteSlot/>} />
       <Route path='/Moods/Create' element={<CreateMood/>} />
-      <Route path='/Keywords/Create' element={<CreateKeyword/>} />
-      <Route path='/Reservoirs/Create' element={<CreateAnyRecord collectionName={'Reservoirs'} recordSchema={ReservoirSchema} onSubmit={ (item) => { console.log( `on Submit of the item ${JSON.stringify(item)}`)}} onClose={( ) => {console.log( 'Done')}}/>} />
-      <Route path='/GrowingUnits/Create' element={<CreateAnyRecord collectionName={'GrowingUnits'} recordSchema={GrowingUnitSchema} onSubmit={ (item) => { console.log( `on Submit of the item ${JSON.stringify(item)}`)}} onClose={( ) => {console.log( 'Done')}}/>} />
-
+      <Route path='/:collectionName/Create' element={<PrepareAnyRecordCreation recordSchema={KeywordSchema} onClose={( ) => {}}/>} />
+      <Route path='/:collectionName/Clean' element={<PrepareAnyRecordCreation recordSchema={GrowingUnitSchema} onClose={( ) => {}}/>} />
     </Routes>
     </AppDataSharingContext.Provider>
 

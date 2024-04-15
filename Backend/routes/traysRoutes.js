@@ -49,7 +49,6 @@ router.post('/', async (request, response) => {
                         trayRow: Number,
                         trayCol: Number,
                         seedlingTray: String,
-                        growingSystem: String,
                         sz: String
                     };
                     slot.used = false;

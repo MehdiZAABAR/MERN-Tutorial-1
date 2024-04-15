@@ -3,6 +3,7 @@ import axios from 'axios';
 import Spinner from '../components/Spinner';
 import { useSnackbar } from 'notistack';
 import BackendURL from '../components/BackendURL';
+import {renderField} from '../tools/FieldFormatting'
 
 const GetEditAnyRecord = ({ collectionName, allRecords, recordId, recordSchema, onSubmit, onClose, reloadData }) => {
     const [recordData, setRecordData] = useState({});
@@ -12,7 +13,7 @@ const GetEditAnyRecord = ({ collectionName, allRecords, recordId, recordSchema, 
 
     const schemaFields = Object.keys(recordSchema.paths);
     // Log the schema fields to verify
-    // console.log('Schema Fields:', schemaFields);
+    //  console.log('Schema Fields:', schemaFields);
 
     useEffect(() => {
         if (reloadData) {
@@ -71,7 +72,6 @@ const GetEditAnyRecord = ({ collectionName, allRecords, recordId, recordSchema, 
             enqueueSnackbar('Failed to update record. Please try again later.', { variant: 'error' });
         }
     };
-
     return (
         <div>
             <h2 className="text-center font-bold">Edit {collectionName} Record</h2>
@@ -81,22 +81,14 @@ const GetEditAnyRecord = ({ collectionName, allRecords, recordId, recordSchema, 
             ) : (
                 <form onSubmit={handleSubmit}>
     {schemaFields.map((fieldName) => (
-        // Exclude the '_id' field from being rendered
-        fieldName !== '_id' && (
-            <div key={fieldName} className="mb-4 flex items-center">
-                <label htmlFor={fieldName} className="text-left font-bold w-20">{fieldName}:</label>
-                <input
-                    type='text'
-                    id={fieldName}
-                    name={fieldName}
-                    value={recordData[fieldName] || ''}
-                    onChange={handleChange}
-                    readOnly={fieldName === '_id'} // Set readOnly attribute for _id field
-                    className="border border-black px-2 py-1 w-4/5"
-                />
-            </div>
-        )
-    ))}
+    // Exclude the '_id' field from being rendered
+    fieldName !== '_id' && (
+        <div key={fieldName} className="mb-4 flex items-center">
+            <label htmlFor={fieldName} className="text-left font-bold w-30">{fieldName}:</label>
+            {renderField(fieldName, recordSchema.paths[fieldName].instance, recordData[fieldName], handleChange)}
+        </div>
+    )
+))}
     <button
         type="submit"
         className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 block mx-auto ${changesMade ? '' : 'opacity-50 cursor-not-allowed'}`}
