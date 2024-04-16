@@ -1,132 +1,11 @@
-// import React, { useContext, useState, useEffect } from 'react';
-// import BackendURL from '../components/BackendURL';
-// import { AppDataSharingContext } from '../App'
-// import ContextDataManager from '../components/utils/ContextDataManager';
-// import SelectMood from '../tools/SelectMood';
-// import { PostToDataBase, PutToDataBase } from "../utils.jsx"
-// import { KeywordSelector } from '../components/utils/KeywordSelector.jsx';
-
-// const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose }) => {
-//     const { appTrays, appSeeds, appMoods, appGrowingUnits, appKeywords } = useContext(AppDataSharingContext);
-//     const [observationData, setObservationData] = useState({
-//         date: new Date().toISOString().substr(0, 10), // Prefill date with today's date
-//         trays: [trayId],
-//         slots: selectedSlots,
-//         growingUnits: [],
-//         mood: '',
-//         text: '',
-//         keywords: [], // Modified to store only keyword text
-//     });
-//     const [mood, setMood] = useState('');
-//     const [trays, setTrays] = useState([]);
-//     const [growingUnits, setGrowingUnits] = useState([]);
-//     const [moods, setMoods] = useState([]);
-//     const [keywords, setKeywords] = useState([]);
-//     const [changesMade, setChangesMade] = useState(false);
-//     const [errors, setErrors] = useState({});
-
-//     useEffect(() => {
-//         setTrays(appTrays);
-//         setGrowingUnits(appGrowingUnits);
-//         setMoods(appMoods);
-//         setKeywords(appKeywords);
-//     }, [appTrays, appGrowingUnits, appMoods, appKeywords]);
-
-//     const handleChange = (e) => {
-//         const { name, value } = e.target;
-//         setObservationData({ ...observationData, [name]: value });
-//         setChangesMade(true);
-
-//         // Remove error message and styling when the user corrects their mistake
-//         setErrors({ ...errors, [name]: '' });
-//     };
-
-//     const handleMoodChange = (selectedMood) => {
-//         setMood(selectedMood);
-//         const moodText = selectedMood.text; // Extract mood text from selectedMood object
-//         setObservationData({ ...observationData, mood: moodText }); // Store mood text in observation data
-//         setChangesMade(true);
-//         setErrors({ ...errors, mood: '' });
-//     };
-
-//     const handleKeywordSelect = (selectedKeywords) => {
-//         setObservationData({ ...observationData, keywords: selectedKeywords }); // Store only keyword text
-//         setChangesMade(true);
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         // Validate compulsory fields
-//         const errors = {};
-//         if (!observationData.mood) {
-//             errors.mood = 'Mood is required';
-//         }
-//         if (observationData.keywords.length === 0 && !observationData.text) {
-//             errors.text = 'At least one keyword or observation text is required';
-//         }
-
-//         // Set errors state
-//         setErrors(errors);
-
-//         // Submit observationData to the server if no errors
-//         if (Object.keys(errors).length === 0) {
-//             PostToDataBase(`${BackendURL}/observations`, observationData);
-//             onClose();
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <ContextDataManager />
-//             <h2>Add Observation</h2>
-//             <form onSubmit={handleSubmit} className="flex flex-col text-left">
-//                 <div className="mb-4">
-//                     <label htmlFor="date"><b>Date:</b></label>
-//                     <input type="date" id="date" name="date" value={observationData.date} onChange={handleChange} />
-//                 </div>
-//                 <div className="mb-4">
-//                     <label>
-//                         <b>Mood:</b>
-//                         <SelectMood selectedMood={mood} setSelectedMood={handleMoodChange} />
-//                         {errors.mood && <span className="text-red-500">*</span>}
-//                     </label>
-//                 </div>
-//                 <div>
-//                     <KeywordSelector keywords={appKeywords} onKeywordSelect={handleKeywordSelect} />
-//                 </div>
-//                 <div className="mb-4">
-//                     <label htmlFor="text"><b>Observation Text:</b>{errors.text && <span className="text-red-500">*</span>}</label>
-//                     <textarea
-//                         id="text"
-//                         name="text"
-//                         value={observationData.text}
-//                         onChange={handleChange}
-//                         rows="4"
-//                         className={`border ${errors.text ? 'border-red-500' : 'border-gray-300'} rounded-md p-2 w-full`}
-//                     ></textarea>
-//                     {errors.text && <span className="text-red-500">{errors.text}</span>}
-//                 </div>
-//                 <button
-//                     type="submit"
-//                     className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 block mx-auto ${(!changesMade) ? 'opacity-50 cursor-not-allowed' : ''}`}
-//                     disabled={!changesMade} // Disable button if no changes made or mood/text is empty
-//                 >
-//                     Submit
-//                 </button>
-//             </form>
-//         </div>
-//     );
-// };
-
-// export default AddObservationForm;
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import BackendURL from '../components/BackendURL';
 import { AppDataSharingContext } from '../App'
 import ContextDataManager from '../components/utils/ContextDataManager';
 import SelectMood from '../tools/SelectMood';
 import { PostToDataBase, PutToDataBase } from "../utils.jsx"
 import { KeywordSelector } from '../components/utils/KeywordSelector.jsx';
-import { FaQuestionCircle } from 'react-icons/fa';
+import { HiOutlineInformationCircle } from 'react-icons/hi';
 
 const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose }) => {
     const { appTrays, appSeeds, appMoods, appGrowingUnits, appKeywords } = useContext(AppDataSharingContext);
@@ -139,7 +18,12 @@ const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose 
     const [showHelp, setShowHelp] = useState(false);
 
     useEffect(() => {
+        console.log('Component mounted');
+
         // Fetch app data from context
+        console.log('Date:', date);
+        console.log('Mood:', mood);
+        console.log('Errors:', errors);
         setDate(new Date().toISOString().substr(0, 10));
         setMood('');
         setSelectedKeywords([]);
@@ -148,19 +32,24 @@ const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose 
         setErrors({});
     }, []);
 
+    const handleHelpIconClick = useCallback(() => {
+        setShowHelp(prevShowHelp => !prevShowHelp);
+    }, []);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         switch (name) {
             case 'date':
                 setDate(value);
+                setChangesMade(true);
                 break;
             case 'text':
                 setText(value);
+                setChangesMade(true);
                 break;
             default:
                 break;
         }
-        setChangesMade(true);
         setErrors({ ...errors, [name]: '' });
     };
 
@@ -268,11 +157,12 @@ const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose 
                     </label>
                 </div>
                 <div>
-                <label>
+                    <label className="inline-block">
                         <b>Select keywords:</b>
-                        <FaQuestionCircle className={`help-icon ${showHelp ? 'active' : ''}`} onClick={(e) => {e.stopPropagation(); setShowHelp(!showHelp)}} />
-                    <KeywordSelector keywords={appKeywords} onKeywordSelect={handleKeywordSelect} showHelp={showHelp}/>
+                        <HiOutlineInformationCircle title="Show Help" className={`help-icon text-3xl ${showHelp ? 'text-white bg-blue-500' : 'text-blue-500'}`}
+                            onClick={handleHelpIconClick} />
                     </label>
+                    <KeywordSelector keywords={appKeywords} onKeywordSelect={handleKeywordSelect} showHelp={showHelp} />
                 </div>
                 <div className="mb-4">
                     <label htmlFor="text"><b>Observation Text:</b>{errors.text && <span className="text-red-500">*</span>}</label>

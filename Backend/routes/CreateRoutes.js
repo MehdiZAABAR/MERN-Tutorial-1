@@ -19,6 +19,7 @@ export const CreateCRUDRoutes = (router, Model, Schema, ValidateData, label) => 
     // Route for getting all records from database
     router.get('/', async (request, response) => {
         try {
+            console.log( `getAll ${JSON.stringify(Model)}`);
             const mrecs = await Model.find({});
             return response.status(200).json(
                 {
