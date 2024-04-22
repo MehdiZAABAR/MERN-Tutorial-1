@@ -122,15 +122,17 @@ export const ReservoirSchema = new mongoose.Schema({
         required: true
     },
     name: { type: String, required: true },
+    easyName: {type: String, required:true},
     type: {type: String, required:true},    // Soil less, Hydroponic, Soil
     geometry: { type: String},
     area: { type: Number },
     maxNumberOfSlots: { type: Number },
     nbRows: { type: Number},
     nbCols: { type: Number},
+    slots: [{type: objId, ref: 'Slot'}],
     purchaseDate: { type: Date },
     serialNumber: { type: String },
-    reservoir: { type: mongoose.Schema.Types.ObjectId, ref: 'Reservoir' }
+    reservoir: { type: mongoose.Schema.Types.ObjectId, ref: 'Reservoir', default: null }
   });
 
   export const GrowingUnit = mongoose.model('GrowingUnit', GrowingUnitSchema);

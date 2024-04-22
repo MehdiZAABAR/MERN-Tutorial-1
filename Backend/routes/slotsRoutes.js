@@ -19,7 +19,6 @@ router.post('/', async (request, response) => {
         console.log( "Slot post")
         if( !ValidateSlotData( request.body))
             return response.status(400).send( "Post all required slot fields");
-        console.log( "growingsystem", request.body.growingSystem);
          const newRecord = {
             used: request.body.used,
             name: request.body.name,
@@ -56,24 +55,38 @@ router.get( '/', async ( request, response) => {
         response.status(500).send( { message: error.message});
      }
 });
-// Route for getting all records with tray.id = id 
-router.get( '/tray:id', async ( request, response) => {
+router.get('/:container/:id', async (request, response) => {
+    // console.log( "request params", request.params);
     try {
-        const tid = request.params.id;
-        console.log( `Find all slots belonging to tray ${JSON.stringify(request.params.id)}`);
-        const mRecord = await Slot.find( { seedlingTray: tid});
-        return response.status(200).json(
-        { 
+        const containerType = request.params.container;
+        const containerId = request.params.id;
+        let criterion;
+
+
+        if (containerType !== 'tray' && containerType !== 'growingunit') {
+            return response.status(400).json({ message: 'Invalid container type' });
+        }
+
+        // console.log(`Find all slots belonging to ${containerType} ${containerId}`);
+        if(containerType === 'tray')
+            criterion = { seedlingTray: containerId };
+        else if( containerType === 'growingunit')
+            criterion = {growingSystem : containerId};
+        else
+            return response.status(400).json({ message: 'Invalid container type' });
+
+        
+        const mRecord = await Slot.find(criterion); // Assuming 'seedlingTray' is the field containing the tray or growing unit ID
+
+        return response.status(200).json({
             count: mRecord.length,
             data: mRecord
-        }
-        );
-    } catch (error){
-        console.log( `Get all records ${error}`);
-        response.status(500).send( { message: error.message});
-     }
+        });
+    } catch (error) {
+        console.log(`Get all records error: ${error}`);
+        response.status(500).send({ message: error.message });
+    }
 });
-
 // Route for getting one record from collection by id
 router.get( '/:id', async ( request, response) => {
     try {

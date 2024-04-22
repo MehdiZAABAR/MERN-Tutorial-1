@@ -16,12 +16,12 @@ const SlotAndPlantStatus = ({ slot, seed }) => {
 <div className='overflow-y-auto max-h-[400px]'>
             Info
         </div>
+        <p className='text-left font-bold mb-2'>Slot: {slot._id}</p>
         <p className='text-left font-bold mb-2'>Slot: {slot.name}</p>
         <p className='text-left mb-1'>Seed Id: {seed.propId}</p>
         <p className='text-left mb-1'>Easy name: {seed.easyName}</p>
         <p className='text-left mb-1'>Variety: {seed.variety}</p>
         <p className='text-left mb-1'>Age: {mAge.months} months and {mAge.days} days</p>
-
         </div>
     );
 };

@@ -15,6 +15,7 @@ import Stats from './pages/Stats.jsx'
 import AllTables from './pages/AllTables.jsx'
 import PrepareAnyRecordCreation  from './pages/CreateAnyRecord.jsx'
 import { ReservoirSchema, GrowingUnitSchema, KeywordSchema } from '../../Backend/models/all_collections_models.js'
+import ContainerComponent from './pages/GUComponent.jsx'
 
 export const AppDataSharingContext = createContext();
 
@@ -36,7 +37,8 @@ const App = () => {
       <Route path='/Seeds/Edit/:id' element={<EditSeed/>} />
       <Route path='/Seeds/Delete/:id' element={<DeleteSeed/>} />
       <Route path='/Trays/Create' element={<CreateTray/>} />
-      <Route path='/Trays/Details/:id' element={<TrayComponent/>} />
+      <Route path='/Trays/Details/:id' element={<TrayComponent containerType='Tray'/>} />
+      <Route path='/GrowingUnits/Details/:id' element={<ContainerComponent containerType='GrowingUnit'/>} />
       <Route path='/Trays/Edit/:id' element={<EditTray/>} />
       <Route path='/Trays/Delete/:id' element={<DeleteTray/>} />
       <Route path='/Slots/Create' element={<CreateTray/>} />

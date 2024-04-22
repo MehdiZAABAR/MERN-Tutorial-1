@@ -38,6 +38,7 @@ CreateCRUDRoutes(reservoirRouter, Reservoir, ReservoirSchema, ValidateReservoirD
 const growingUnitsRouter = express.Router();
 CreateCRUDRoutes(growingUnitsRouter, GrowingUnit, GrowingUnitSchema, ValidateGUData, "Growing Unit");
 
+// Define logging middleware
 
 app.get( '/', (request, response) => {
     console.log( "Request to welcome!");
@@ -45,13 +46,13 @@ app.get( '/', (request, response) => {
 
 })
 app.use( '/seeds', seedsRouter);
-app.use( '/trays', traysRouter);
+app.use( '/trays', logRequests, traysRouter);
 app.use( '/slots', slotsRouter);
 app.use( '/observations', observationsRouter);
 app.use( '/moods', moodsRouter);
 app.use( '/keywords', kwRouter);
 app.use( '/reservoirs', reservoirRouter);
-app.use( '/growingunits', growingUnitsRouter);
+app.use('/growingunits', logRequests, growingUnitsRouter);
 
 // app.use( '/operations', operationsRouter);
 // app.use( '/culturePlatforms', platformsRouter);

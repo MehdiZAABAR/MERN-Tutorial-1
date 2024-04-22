@@ -6,13 +6,14 @@ import BackendURL from '../components/BackendURL';
 import BackButton from '../components/BackButton';
 import { toLetters } from '../utils';
 import RadioButton from '../components/utils/RadioButton';
-import TrayDisplayHeader from '../components/home/TrayDisplayHeader';
+import GUDisplayHeader from '../components/home/TrayDisplayHeader';
 import { FaToggleOn, FaToggleOff, FaCheckSquare, FaTimes } from 'react-icons/fa'; // Import icons
 import { AppDataSharingContext } from '../App';
-import ContextDataManager from '../components/utils/ContextDataManager';
-const TrayComponent = ( containerType) => {
+
+
+const ContainerComponent = ( containerType) => {
   const { appTrays, appSeeds, appGrowingUnits } = useContext(AppDataSharingContext);
-  const [tray, setTray] = useState({});
+  const [container, setContainer] = useState({});
   const [slots, setSlots] = useState([]);
   const { id } = useParams();
   const [selectionEnabled, setSelectionEnabled] = useState(false);
@@ -21,24 +22,26 @@ const TrayComponent = ( containerType) => {
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [id, appGrowingUnits]);
 
   const fetchData = async () => {
     try {
-      // Fetch tray data
-      const trayResponse = await axios.get(`${BackendURL}/trays/${id}`);
-      setTray(trayResponse.data);
-
-      // Fetch slots data belonging to the tray
-      const slotsResponse = await axios.get(`${BackendURL}/slots/tray/${id}`);
+        // console.log( "looking for container id", id);
+        if( !appGrowingUnits || appGrowingUnits.length ===0 )
+            return;
+        // console.log( "appGU", appGrowingUnits);
+        const mContainer = appGrowingUnits.find(unit => unit._id === id);
+        if( !mContainer)
+            return;
+      setContainer( mContainer);
+      // Fetch slots data belonging to the container
+      const slotsResponse = await axios.get(`${BackendURL}/slots/growingunit/${id}`);
       setSlots(slotsResponse.data.data);
-      // console.log( `slots = ${JSON.stringify(slotsResponse.data)}`);
-
       // Set cell size based on tray size
-      setCellSize(trayResponse.data.slotSize === 'big' ? '200px' : trayResponse.data.slotSize === 'medium' ? '150px' : '100px');
+      setCellSize( mContainer.slotSize === 'big' ? '200px' : mContainer.slotSize === 'medium' ? '150px' : '100px');
     } catch (error) {
       console.error('Error fetching data:', error);
-      setTray({});
+      setContainer({});
       setSlots([]);
       setSeeds([]);
     }
@@ -80,18 +83,17 @@ const TrayComponent = ( containerType) => {
     }
   };
 
-  const handleTrayUpdate = (updatedTray, updatedSlots) => {
+  const handleContainerUpdate = (updatedContainer, updatedSlots) => {
 
     cancelSelection();
     setSelectionEnabled(false);
-    if (updatedTray) setTray(updatedTray);
+    if (updatedContainer) setContainer(updatedContainer);
     if (updatedSlots) setSlots(updatedSlots);
   };
 return (
   <div className='p-4'>
     <BackButton />
-    <ContextDataManager/>
-    <TrayDisplayHeader tray={tray}/>
+    <GUDisplayHeader tray={container} containerType = 'GrowingUnit'/>
     <h2 className="text-center mt-20">Slots</h2>
     <div className="flex justify-center items-center">
       <table className="border-collapse">
@@ -112,28 +114,27 @@ return (
                 </div>
               )}
             </td>
-            {[...Array(tray.nbCols)].map((_, colIndex) => (
+            {[...Array(container.nbCols)].map((_, colIndex) => (
               <td key={colIndex} className="border p-4" style={cellStyle}>{String(toLetters(colIndex))}</td>
             ))}
           </tr>
-          {[...Array(tray.nbRows)].map((_, rowIndex) => (
+          {[...Array(container.nbRows)].map((_, rowIndex) => (
             <tr key={rowIndex}>
               <td className="border p-4" style={cellStyle}>{rowIndex + 1}</td>
-              {[...Array(tray.nbCols)].map((_, colIndex) => {
+              {[...Array(container.nbCols)].map((_, colIndex) => {
                 const slot = slots.find(slot => slot.trayRow === rowIndex && slot.trayCol === colIndex);
-                // console.log( `TrayComponent renders Slot_${rowIndex}_${colIndex}`);
                 return (
                   
                   <td key={`Slot_${rowIndex}_${colIndex}`} className="border p-4 relative" style={{ width: cellSize, height: cellSize }}>
                     <SlotComponent
                       slots={slots}
-                      containerType = {'Tray'}
-                      containerId={tray._id}
+                      containerId={container._id}
+                      containerType={'GrowingUnit'}
                       rowIndex={rowIndex}
                       colIndex={colIndex}
                       seeds={appSeeds}
                       selectedSlots={selectedSlots}
-                      onContainerUpdate={handleTrayUpdate}
+                      onContainerUpdate={handleContainerUpdate}
                     />
                     {selectionEnabled && slots.length > 0 && (
                       <div className="absolute top-0 left-0">
@@ -159,5 +160,4 @@ return (
 
 
     }
-export default TrayComponent;
-
+export default ContainerComponent;

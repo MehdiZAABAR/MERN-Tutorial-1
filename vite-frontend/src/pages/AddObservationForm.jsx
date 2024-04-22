@@ -18,12 +18,8 @@ const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose 
     const [showHelp, setShowHelp] = useState(false);
 
     useEffect(() => {
-        console.log('Component mounted');
 
         // Fetch app data from context
-        console.log('Date:', date);
-        console.log('Mood:', mood);
-        console.log('Errors:', errors);
         setDate(new Date().toISOString().substr(0, 10));
         setMood('');
         setSelectedKeywords([]);

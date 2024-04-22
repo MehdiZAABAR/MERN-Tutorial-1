@@ -20,7 +20,6 @@ const CreateTraysSlots = ({ tray }) => {
             growingSystem: String,
             sz: String
         };
-        console.log( "Create Tray slots ", data);
         data.used = false;
         data.seedlingTray = id;
         data.sz = sz;
@@ -44,7 +43,6 @@ const CreateTraysSlots = ({ tray }) => {
         await axios
         .put(`${BackendURL}/trays/${tray._id}`, tray)
         .then(() => {
-          console.log( data);
         })
         .catch((error) => {
           console.log(error);

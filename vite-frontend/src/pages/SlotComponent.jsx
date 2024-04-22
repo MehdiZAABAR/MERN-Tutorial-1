@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CreateOneTraySlot from '../components/home/CreateOneTraySlot';
+import CreateOneContainerSlot from '../components/home/CreateOneContainerSlot';
 import { GiPlantSeed, GiPlantWatering } from 'react-icons/gi';
 import { BsDatabaseAdd } from 'react-icons/bs';
 import { RiDeleteBin5Fill } from "react-icons/ri";
@@ -19,7 +19,7 @@ import AddObservationForm from './AddObservationForm.jsx';
 import TransferForm from './TransferForm.jsx';
 import ModalForm from './ModalForm.jsx';
 import RequestConfirmationForm from './RequestConfirmationForm.jsx';
-const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds, onTrayUpdate }) => {
+const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIndex, colIndex, seeds, onContainerUpdate }) => {
   const [seed, setSeed] = useState(null);
   const [slot, setSlot] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -28,9 +28,19 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
   const [modalContent, setModalContent] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
+  let collectionURL = '';
+
+  if( containerType === 'Tray')
+    collectionURL = 'trays'
+  else if( containerType === 'GrowingUnit')
+    collectionURL = 'growingunits'
+  else
+    collectionURL = 'undefCollection'
+
+
 
   //  console.log( `selectedSlots = ${JSON.stringify(selectedSlots)} \
-  //  trayId = ${trayId} rowIndex ${rowIndex} colIndex ${colIndex}`, {variant:'Success'});
+  //  containerId = ${containerId} rowIndex ${rowIndex} colIndex ${colIndex}`, {variant:'Success'});
 
   useEffect(() => {
     // Find the slot corresponding to the given row and column indices
@@ -110,15 +120,16 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
 
     const observationData = {
       date: new Date(),
-      trays: [trayId], // Example tray IDs
+      trays: [containerId], // Example container IDs
+      growingunits: [containerId], // Example container IDs
       slots: selectedSlots, // Example slot IDs
       photos: [], // Example photo IDs
       text: `${selectedSeed.propId} ${selectedSeed._id} added to ${JSON.stringify(selectedSlots)}`,
-      keywords: [], // Example keyword IDs
-      mood: [], // Example mood IDs
+      keywords: ['Sowing'], // Example keyword IDs
+      mood: 'Es Geht So', // Example mood IDs
     };
     PostToDataBase(`${BackendURL}/observations`, observationData);
-    onTrayUpdate('', updatedSlots);
+    onContainerUpdate('', updatedSlots);
   }
 
   const cellStyle = {
@@ -132,8 +143,8 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
   };
 
 
-  const DeleteSlots = async (trayid, selectedSlots) => {
-    // console.log(`selectedSlots to delete = ${JSON.stringify(selectedSlots)}`);
+  const DeleteSlots = async (containerid, selectedSlots) => {
+    //  console.log(`selectedSlots to delete = ${JSON.stringify(selectedSlots)}`);
     try {
       selectedSlots.forEach(async element => {
         const response = await axios.delete(`${BackendURL}/slots/${element}`);
@@ -142,8 +153,10 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
       const updatedSlots = slots.filter(s => !selectedSlots.includes(s._id));
       // console.log(`Updated Slots = ${JSON.stringify(updatedSlots)}`);
       slots = updatedSlots;
-      const updatedTray = await axios.patch(`${BackendURL}/trays/${trayid}`, { slots: updatedSlots });
-      onTrayUpdate(updatedTray.data, updatedSlots);
+      // console.log( "backendURL", BackendURL, "collection url ", collectionURL, "containerId", containerId);
+      const updatedTray = await axios.patch(`${BackendURL}/${collectionURL}/${containerid}`, { slots: updatedSlots });
+      // console.log( "updated container", updatedTray.data);
+      onContainerUpdate(updatedTray.data, slots);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -152,18 +165,18 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
   }
 
 
-  const handleCreateOneTraySlot = (updatedTray, newSlot) => {
+  const handleCreateOneContainerSlot = (updatedTray, newSlot) => {
     setSeedIconSize((newSlot.sz == 'big') ? 50 : (newSlot.sz == 'medium') ? 35 : 20);
     setSlot(newSlot);
     slots.push(newSlot);
-    onTrayUpdate(updatedTray, slots);
+    onContainerUpdate(updatedTray, slots);
   }
 
 
 
 
-  const RemoveDeadSeed = async (selectedSlots, onTrayUpdate) => {
-    const trayId = slot.trayId;
+  const RemoveDeadSeed = async (selectedSlots, onContainerUpdate) => {
+    const containerId = slot.containerId;
 
     const updatedSlots = slots.map(item => {
       if ((selectedSlots.includes(item._id)) && (item.seed != null)) {
@@ -177,7 +190,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
 
     // const observationData = {
     //   date: new Date(),
-    //   trays: [trayId], // Example tray IDs
+    //   trays: [containerId], // Example container IDs
     //   slots: selectedSlots, // Example slot IDs
     //   photos: [], // Example photo IDs
     //   text: selectedSlots.length > 1
@@ -188,7 +201,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
     // };
 
     // PostToDataBase(`${BackendURL}/observations`, observationData);
-    onTrayUpdate('', updatedSlots);
+    onContainerUpdate('', updatedSlots);
   };
 
   // 
@@ -206,7 +219,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
       return;
     }
     if (selection.length == 0) selection.push(slot._id);
-    showModalContent(<AddObservationForm slots={slots} selectedSlots={selection} seed={seed} trayId={trayId} onClose={ () => { setShowModal(false); selection=[]}}/>);
+    showModalContent(<AddObservationForm slots={slots} selectedSlots={selection} seed={seed} containerId={containerId} onClose={ () => { setShowModal(false); selection=[]}}/>);
   }
 
   const HandleDeleteManySlots = () => {
@@ -219,7 +232,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
 
     showModalContent(
       <RequestConfirmationForm
-        onConfirm={() => DeleteSlots(trayId, selectedSlots)}
+        onConfirm={() => DeleteSlots(containerId, selectedSlots)}
         onCancel={() => setShowModal(false)}
         question={selectedSlots && selectedSlots?.length > 1
           ? 'Are you sure you want to remove all the selected slots ?'
@@ -236,7 +249,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
     if (selectedSlots.length == 0)
       selectedSlots.push(slot._id);
     showModalContent(<RequestConfirmationForm
-      onConfirm={() => RemoveDeadSeed(selectedSlots, onTrayUpdate)}
+      onConfirm={() => RemoveDeadSeed(selectedSlots, onContainerUpdate)}
       onCancel={() => setShowModal(false)}
       question={selectedSlots && selectedSlots?.length > 1
         ? `Are you sure you want to remove the plants from all selected slots ?`
@@ -265,7 +278,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
                 <AiOutlineDelete className='text-2xl text-black hover:text-red-400' onClick={HandleDeleteManyPlants} />
               </div>
               <div title="Transfer Slot">
-                <TbTransferOut className='text-2xl text-black hover:text-green-600' onClick={() => { showModalContent(<TransferForm slot={slot} seed={seed} />); }} />
+                <TbTransferOut className='text-2xl text-black hover:text-green-600' onClick={() => { showModalContent(<TransferForm slot={slot} slotId = {slot._id} containerId={containerId} containerType = 'Tray' seed={seed} onClose={() => { setShowModal(false) }}/>); }} />
               </div>
               <div title="Observations">
                 <MdLocalSee className='text-2xl text-black hover:text-white' onClick={() => { showModalContent(<ObservationsLogForm slot={slot} seed={seed} />); }} />
@@ -283,7 +296,7 @@ const SlotComponent = ({ slots, selectedSlots, trayId, rowIndex, colIndex, seeds
           </div>
         )
       ) : (
-        <CreateOneTraySlot trayId={trayId} row={rowIndex} col={colIndex} onCreateSlot={handleCreateOneTraySlot} />
+        <CreateOneContainerSlot containerType = {containerType} containerId={containerId} row={rowIndex} col={colIndex} onCreateSlot={handleCreateOneContainerSlot} />
       )}
       {showModal && (<ModalForm content={modalContent} onClose={() => { setShowModal(false) }} />)}
 

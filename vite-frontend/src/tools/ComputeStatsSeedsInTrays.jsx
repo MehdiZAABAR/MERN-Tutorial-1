@@ -1,7 +1,7 @@
 import axios from 'axios';
 import BackendURL from '../components/BackendURL';
 
-const ComputeStatsSeedsInTrays = async (Tray, Seeds) => {
+const ComputeStatsSeedsInTrays = async (containerType, Tray, Seeds) => {
     const trayStats = {
         trayUsage: 0,
         traySlots: [],
@@ -21,12 +21,17 @@ const ComputeStatsSeedsInTrays = async (Tray, Seeds) => {
 
     try {
         let response = {};
+        let containerName = 'tray'
+        if( containerType === 'GrowingUnit')
+        {
+            containerName = 'growingunit'
+        }
         if( Tray._id === '0') //AllTrays
         {
             response = await axios.get(`${BackendURL}/Slots`);
         }
         else
-            response = await axios.get(`${BackendURL}/Slots/tray${Tray._id}`);
+            response = await axios.get(`${BackendURL}/Slots/${containerName}/${Tray._id}`);
         trayStats.traySlots = response.data?.data || [];
         const totalSlots = trayStats.traySlots.length;
         const totalCells = Tray.nbCols * Tray.nbRows;

@@ -113,6 +113,7 @@ router.get('/:id', async (request, response) => {
 
 // Route to update a Record
 router.put('/:id', async (request, response) => {
+    console.log( "Patch / Update Tray");
     try {
         if (!ValidateTrayData(request.body))
             return response.status(400).send("Post all required record fields");

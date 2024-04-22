@@ -4,44 +4,57 @@ import { useSnackbar } from 'notistack';
 import BackendURL from '../BackendURL';
 import { toLetters } from '../../utils';
 
-const CreateOneTraySlot = ({ trayId, row, col , onCreateSlot }) => {
+const CreateOneContainerSlot = ({ containerType, containerId, row, col, onCreateSlot }) => {
     const [loading, setLoading] = useState(false);
-    const [tray, setTray] = useState({});
+    const [container, setContainer] = useState({});
     const { enqueueSnackbar } = useSnackbar();
+    let collectionURL, nameprefix;
+    if (containerType === 'Tray')
+        collectionURL = 'trays'
+    else if (containerType === 'GrowingUnit')
+    {
+        collectionURL = 'growingunits'
+        nameprefix = 'name';
+    }
+    else
+    {
+        collectionURL = 'undefinedContainer'
+        nameprefix = easyName;
+}
 
     const handleCreateOneSlot = async () => {
         setLoading(true);
 
         try {
 
-            // enqueueSnackbar( `Requesting ${BackendURL}/trays/${trayId}`, 'success');
-            const trayResponse = await axios.get(`${BackendURL}/trays/${trayId}`);
-            setTray(trayResponse.data);
+            const containerResponse = await axios.get(`${BackendURL}/${collectionURL}/${containerId}`);
+            setContainer(containerResponse.data);
             const slotData = {
                 used: false,
                 // seed: '',
                 startDate: '',
                 trayRow: row,
                 trayCol: col,
-                seedlingTray: trayId,
-                growingSystem: null,
-                sz: trayResponse.data.slotSize,
-                name: `${trayResponse.data.easyName}_${toLetters(col)}.${row + 1}`
+                sz: containerResponse.data.slotSize,
+                name: `${containerResponse.data.easyName}_${toLetters(col)}.${row + 1}`
             };
+
+            if (containerType === 'Tray')
+                slotData.seedlingTray = containerId;
+            else if (containerType === 'GrowingUnit')
+                slotData.growingSystem = containerId;
+
 
             // Create slot
             const response = await axios.post(`${BackendURL}/slots`, slotData);
             const createdSlotId = response.data._id;
-            const mTray = trayResponse.data;
+            const mContainer = containerResponse.data;
 
-            // // Update tray with the new slot ID
-             const updatedTray = { ...mTray, slots: [...mTray.slots, createdSlotId] };
-            //  enqueueSnackbar(`${JSON.stringify(updatedTray)}`, { variant: 'success' });
-             await axios.put(`${BackendURL}/trays/${trayId}`, updatedTray);
-             onCreateSlot( updatedTray, response.data)
+            // // Update container with the new slot ID
+            const updatedContainer = { ...mContainer, slots: [...mContainer.slots, createdSlotId] };
 
-            // Show success message
-            // enqueueSnackbar('Done', { variant: 'success' });
+            await axios.put(`${BackendURL}/${collectionURL}/${containerId}`, updatedContainer);
+            onCreateSlot(updatedContainer, response.data)
         } catch (error) {
             console.error('Error creating slot:', error);
             enqueueSnackbar('An error occurred while creating the slot', { variant: 'error' });
@@ -63,4 +76,4 @@ const CreateOneTraySlot = ({ trayId, row, col , onCreateSlot }) => {
     );
 };
 
-export default CreateOneTraySlot;
+export default CreateOneContainerSlot;
