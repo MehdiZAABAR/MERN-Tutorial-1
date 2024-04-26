@@ -31,7 +31,15 @@ const ComputeStatsSeedsInTrays = async (containerType, Tray, Seeds) => {
             response = await axios.get(`${BackendURL}/Slots`);
         }
         else
-            response = await axios.get(`${BackendURL}/Slots/${containerName}/${Tray._id}`);
+        {
+            const filter = { seedlingTray: Tray._id };
+
+      // Fetch slots data belonging to the tray using the generic router
+            response = await axios.get(`${BackendURL}/slots`, {
+                params: {
+                  filter: {"seedlingTray": { "$eq": Tray._id }}
+                }});
+        }
         trayStats.traySlots = response.data?.data || [];
         const totalSlots = trayStats.traySlots.length;
         const totalCells = Tray.nbCols * Tray.nbRows;

@@ -89,6 +89,7 @@ router.get('/:container/:id', async (request, response) => {
 });
 // Route for getting one record from collection by id
 router.get( '/:id', async ( request, response) => {
+    console.log( "should not be here");
     try {
         const { id } = request.params;
         const mRecord = await Slot.findById( id);

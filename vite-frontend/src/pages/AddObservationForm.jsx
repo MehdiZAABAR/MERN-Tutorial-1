@@ -9,7 +9,7 @@ import { HiOutlineInformationCircle } from 'react-icons/hi';
 
 const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose }) => {
     const { appTrays, appSeeds, appMoods, appGrowingUnits, appKeywords } = useContext(AppDataSharingContext);
-    const [date, setDate] = useState(new Date().toISOString().substr(0, 10));
+    const [date, setDate] = useState(new Date().toISOString());
     const [mood, setMood] = useState('');
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [text, setText] = useState('');
@@ -20,7 +20,7 @@ const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose 
     useEffect(() => {
 
         // Fetch app data from context
-        setDate(new Date().toISOString().substr(0, 10));
+        setDate(new Date().toISOString());
         setMood('');
         setSelectedKeywords([]);
         setText('');
@@ -36,7 +36,16 @@ const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose 
         const { name, value } = e.target;
         switch (name) {
             case 'date':
-                setDate(value);
+                const selectedDate = new Date(value);
+                const currentDate = new Date();
+                // Check if the input value only contains the date part
+                if (value.length === 10) {
+                    // Include the time part from the current date
+                    selectedDate.setHours(currentDate.getHours());
+                    selectedDate.setMinutes(currentDate.getMinutes());
+                    selectedDate.setSeconds(currentDate.getSeconds());
+                }
+                setDate(selectedDate.toISOString());
                 setChangesMade(true);
                 break;
             case 'text':
@@ -98,7 +107,7 @@ const AddObservationForm = ({ slots, selectedSlots, seed, trayId, GUId, onClose 
             <form onSubmit={handleSubmit} className="flex flex-col text-left">
                 <div className="mb-4">
                     <label htmlFor="date"><b>Date:</b></label>
-                    <input type="date" id="date" name="date" value={date} onChange={handleChange} />
+                    <input type="date" id="date" name="date" value={date.split('T')[0]} onChange={handleChange} />
                 </div>
                 <div className="mb-4">
                     <label htmlFor="slots"><b>Slots:</b></label>

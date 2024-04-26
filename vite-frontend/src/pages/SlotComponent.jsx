@@ -19,6 +19,8 @@ import AddObservationForm from './AddObservationForm.jsx';
 import TransferForm from './TransferForm.jsx';
 import ModalForm from './ModalForm.jsx';
 import RequestConfirmationForm from './RequestConfirmationForm.jsx';
+import {GetSlotRecentMood} from '../tools/GetMood.jsx'
+
 const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIndex, colIndex, seeds, onContainerUpdate }) => {
   const [seed, setSeed] = useState(null);
   const [slot, setSlot] = useState(null);
@@ -27,6 +29,7 @@ const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIn
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
+  const [mood, setMood] = useState({});
 
   let collectionURL = '';
 
@@ -50,7 +53,7 @@ const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIn
     );
     setSlot(foundSlot);
     if (foundSlot)
-      setSeedIconSize((foundSlot.sz == 'big') ? 50 : (foundSlot.sz == 'medium') ? 35 : 20);
+       setSeedIconSize((foundSlot.sz == 'big') ? 50 : (foundSlot.sz == 'medium') ? 35 : 20);
     // Fetch seed data if the slot is used and has a seed
     if (foundSlot && foundSlot.used && foundSlot.seed) {
       fetchSeed(foundSlot.seed);
@@ -65,9 +68,16 @@ const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIn
       console.error('Error fetching seed data:', error);
     }
   };
+  const fetchMood = async () => {
+    if (slot) {
+        const moodData = await GetSlotRecentMood(slot);
+        setMood(moodData);
+    }
+};
 
-
-
+  useEffect(() => {
+    fetchMood();
+}, [slot]);
 
   const handleSelectSeed = async (selectedSeed) => {
 
@@ -132,13 +142,27 @@ const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIn
     onContainerUpdate('', updatedSlots);
   }
 
+  const moodColors = {
+    'Kaput': '#4d2600',       // Dark red
+    'Bad': '#ffbf00',         // Firebrick
+    'Worrying': '#d9ff66',    // Light salmon
+    'Es Geht So': '#bbff33',  // Light green
+    'Good': '#33cc33',        // Medium sea green
+    'Excellent': '#009900',   // Sea green
+    'Wunderbar': '#339966'    // Dark green
+};
+const MoodBgColor = (mood) => {
+    return mood && moodColors[mood] ? moodColors[mood] : 'white'; // Default color is white if mood is not found or undefined
+};
   const cellStyle = {
     // width: '100px',
     // height: '100px',
     border: '1px solid #ddd',
     padding: '10px',
     textAlign: 'center',
-    backgroundColor: slot && slot.used && seed ? 'lightgreen' : slot ? 'white' : 'grey',
+    backgroundColor: slot && slot.used && seed
+        ? (mood && mood.mood ? MoodBgColor(mood.mood) : 'white')
+        : 'grey',
     borderRadius: '5px',
   };
 
@@ -219,7 +243,7 @@ const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIn
       return;
     }
     if (selection.length == 0) selection.push(slot._id);
-    showModalContent(<AddObservationForm slots={slots} selectedSlots={selection} seed={seed} containerId={containerId} onClose={ () => { setShowModal(false); selection=[]}}/>);
+    showModalContent(<AddObservationForm slots={slots} selectedSlots={selection} seed={seed} containerId={containerId} onClose={ () => { setShowModal(false); selection=[]; fetchMood();}}/>);
   }
 
   const HandleDeleteManySlots = () => {
@@ -256,9 +280,8 @@ const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIn
         : 'Are you sure you want to remove the plants from this slot ?'}
     />);
   }
-
   return (
-    <div style={cellStyle}>
+    <div key={`${mood?.mood}-${rowIndex}-${colIndex}`} style={cellStyle}>
       {slot ? (
         slot.used && seed ? (
           <div>

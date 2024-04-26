@@ -10,7 +10,7 @@ import TrayDisplayHeader from '../components/home/TrayDisplayHeader';
 import { FaToggleOn, FaToggleOff, FaCheckSquare, FaTimes } from 'react-icons/fa'; // Import icons
 import { AppDataSharingContext } from '../App';
 import ContextDataManager from '../components/utils/ContextDataManager';
-const TrayComponent = ( containerType) => {
+const TrayComponent = ( {containerType}) => {
   const { appTrays, appSeeds, appGrowingUnits } = useContext(AppDataSharingContext);
   const [tray, setTray] = useState({});
   const [slots, setSlots] = useState([]);
@@ -18,29 +18,55 @@ const TrayComponent = ( containerType) => {
   const [selectionEnabled, setSelectionEnabled] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [cellSize, setCellSize] = useState('100px'); // Default cell size
-
   useEffect(() => {
     fetchData();
   }, [id]);
 
+  // const fetchData = async () => {
+  //   try {
+  //     // Fetch tray data
+  //     const trayResponse = await axios.get(`${BackendURL}/trays/${id}`);
+  //     setTray(trayResponse.data);
+
+  //     // Fetch slots data belonging to the tray
+  //     const slotsResponse = await axios.get(`${BackendURL}/slots/tray/${id}`);
+  //     setSlots(slotsResponse.data.data);
+  //     // console.log( `slots = ${JSON.stringify(slotsResponse.data)}`);
+
+  //     // Set cell size based on tray size
+  //     setCellSize(trayResponse.data.slotSize === 'big' ? '200px' : trayResponse.data.slotSize === 'medium' ? '150px' : '100px');
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //     setTray({});
+  //     setSlots([]);
+  //     setSeeds([]);
+  //   }
+  // };
   const fetchData = async () => {
+    let fieldName = 'seedlingTray';
     try {
       // Fetch tray data
       const trayResponse = await axios.get(`${BackendURL}/trays/${id}`);
       setTray(trayResponse.data);
+      if( containerType === 'Tray')
+        fieldName = 'seedlingTray';
+      else
+        fieldName = 'growingUnit'
+        // console.log( "TrayComponent container Type = ", containerType, "field name", fieldName);
 
-      // Fetch slots data belonging to the tray
-      const slotsResponse = await axios.get(`${BackendURL}/slots/tray/${id}`);
+      // Fetch slots data belonging to the tray using the generic router
+      const slotsResponse = await axios.get(`${BackendURL}/slots`, {
+        params: {
+          filter: {[fieldName]: { '$eq': id }}
+        }});
       setSlots(slotsResponse.data.data);
-      // console.log( `slots = ${JSON.stringify(slotsResponse.data)}`);
-
+      
       // Set cell size based on tray size
       setCellSize(trayResponse.data.slotSize === 'big' ? '200px' : trayResponse.data.slotSize === 'medium' ? '150px' : '100px');
     } catch (error) {
       console.error('Error fetching data:', error);
       setTray({});
       setSlots([]);
-      setSeeds([]);
     }
   };
 

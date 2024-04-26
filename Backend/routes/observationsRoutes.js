@@ -39,21 +39,50 @@ router.post('/', async (request, response) => {
 
 });
 
-// Route for getting all records from collection
-router.get( '/', async ( request, response) => {
+// Route for getting all records from the collection with filtering and sorting
+// Route for getting all records from the collection with filtering and sorting
+// Route for getting all records from the collection with filtering and sorting
+// Route for getting all records from the collection with filtering and sorting
+// router.get('/', async (request, response) => {
+//     try {
+//         // Extract query parameters
+//         const { filter, sort, limit } = request.query;
+//         // console.log( "filter", filter, "sort", sort, "limit", limit);
+//         // Perform the query to fetch observations with filtering and sorting
+//         const observations = await Observation.find(filter)
+//             .sort(JSON.parse(sort))
+//             .limit(limit);
+//         // console.log( "backend observations sorted = ", observations);
+//         return response.status(200).json({  
+//             count: observations.length,
+//             data: observations
+//         });
+//     } catch (error) {
+//         console.log(`Error fetching observations: ${error}`);
+//         return response.status(500).send({ message: error.message });
+//     }
+// });
+router.get('/', async (request, response) => {
     try {
-        const mRecord = await Observation.find( {});
+        const { filter, sort, limit } = request.query;
+        // console.log( "Get query to observation with filter", filter, "sort", sort, "limit", limit);
+        const mrecs = await Observation.find(filter? filter: {})
+        .sort(sort ? JSON.parse(sort) : null)
+        .limit( limit? limit :null);
+        console.log( mrecs);
         return response.status(200).json(
-        { 
-            count: mRecord.length,
-            data: mRecord
-        }
+            {
+                count: mrecs.length,
+                data: mrecs
+            }
         );
-    } catch (error){
-        console.log( `Get all records ${error}`);
-        response.status(500).send( { message: error.message});
-     }
+    } catch (error) {
+        let msg = `Query "${JSON.stringify(request.query)}" to observations encountered an error!`;
+        console.log(msg, error);
+        response.status(500).send({ message: msg, error: error.message });
+    }
 });
+
 // Route for getting all records with tray.id = id 
 router.get( '/tray:id', async ( request, response) => {
     try {

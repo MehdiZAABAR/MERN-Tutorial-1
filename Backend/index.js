@@ -3,12 +3,12 @@ import { PORT, mongoDBURL} from "./config.js";
 import mongoose from "mongoose";
 import seedsRouter from "./routes/seedsRoutes.js"
 import traysRouter from "./routes/traysRoutes.js"
-import slotsRouter from "./routes/slotsRoutes.js"
-import observationsRouter from "./routes/observationsRoutes.js"
+// import slotsRouter from "./routes/slotsRoutes.js"
+// import observationsRouter from "./routes/observationsRoutes.js"
 import moodsRouter from "./routes/moodsRoutes.js"
 import kwRouter from "./routes/keywordsRoutes.js"
 import cors from "cors"
-import { GrowingUnit, GrowingUnitSchema, ValidateGUData, Reservoir, ReservoirSchema, ValidateReservoirData } from "./models/all_collections_models.js";
+import { GrowingUnit, ValidateGUData, Reservoir, ValidateReservoirData, Slot, ValidateSlotData, Observation, ValidateObservationData } from "./models/all_collections_models.js";
 import {CreateCRUDRoutes} from "./routes/CreateRoutes.js"
 const logRequests = (req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -33,11 +33,15 @@ app.use( cors());
 
 //Generic CRUD routes for a collection defined by its mongoose Schema and Model
 const reservoirRouter = express.Router();
-CreateCRUDRoutes(reservoirRouter, Reservoir, ReservoirSchema, ValidateReservoirData, "Reservoir");
+CreateCRUDRoutes(reservoirRouter, Reservoir, ValidateReservoirData, 10240);
 //Generic CRUD routes for a collection defined by its mongoose Schema and Model
 const growingUnitsRouter = express.Router();
-CreateCRUDRoutes(growingUnitsRouter, GrowingUnit, GrowingUnitSchema, ValidateGUData, "Growing Unit");
+CreateCRUDRoutes(growingUnitsRouter, GrowingUnit, ValidateGUData, 10240);
 
+const newSlotsRouter = express.Router();
+CreateCRUDRoutes(newSlotsRouter, Slot, ValidateSlotData, 0);
+const newObsRouter = express.Router();
+CreateCRUDRoutes(newObsRouter, Observation, ValidateObservationData, 0);
 // Define logging middleware
 
 app.get( '/', (request, response) => {
@@ -46,13 +50,13 @@ app.get( '/', (request, response) => {
 
 })
 app.use( '/seeds', seedsRouter);
-app.use( '/trays', logRequests, traysRouter);
-app.use( '/slots', slotsRouter);
-app.use( '/observations', observationsRouter);
+app.use( '/trays', traysRouter);
+app.use( '/slots', newSlotsRouter);
+app.use( '/observations', newObsRouter);
 app.use( '/moods', moodsRouter);
 app.use( '/keywords', kwRouter);
 app.use( '/reservoirs', reservoirRouter);
-app.use('/growingunits', logRequests, growingUnitsRouter);
+app.use('/growingunits', growingUnitsRouter);
 
 // app.use( '/operations', operationsRouter);
 // app.use( '/culturePlatforms', platformsRouter);

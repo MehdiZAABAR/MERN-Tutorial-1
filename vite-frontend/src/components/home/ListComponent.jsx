@@ -8,6 +8,7 @@ import ModalForm from '../../pages/ModalForm';
 import { useSnackbar, enqueueSnackbar } from 'notistack';
 import axios from 'axios';
 import BackendURL from '../BackendURL';
+import CleanupRecords from '../utils/CleanupRecords';
 
 const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, onEditClick }) => {
   const data = dataLoader.data;
@@ -87,9 +88,7 @@ const ListComponent = ({ title, dataLoader, loading, renderHeader, renderItem, o
           <Link to={`/${title.toLowerCase()}/create`}>
             <MdOutlineAddBox className='text-sky-800 text-4xl' />
           </Link>
-          <Link to={`/${title.toLowerCase()}/clean`}>
-            <MdOutlineCleaningServices className='text-sky-800 text-4xl' />
-          </Link>
+          <MdOutlineCleaningServices className='text-sky-800 text-4xl' onClick={() => {showModalContent(<CleanupRecords records = {data}/>)}}/>
         </div>
       </div>
       {!collapsed && (
