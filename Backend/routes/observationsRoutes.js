@@ -2,19 +2,6 @@ import express from "express"
 import {Observation, ValidateObservationData} from "../models/all_collections_models.js"
 const router = express.Router();
 
-// export const ObservationSchema = mongoose.Schema(
-//     {
-//         date: Date,
-//         trays: [{ type: objId, ref: 'Tray' }],
-//         slots: [{ type: objId, ref: 'Slot' }],
-//         photos: [objId],
-//         text: String,
-//         keywords: [{ type: objId, ref: 'Keyword' }],
-//         mood: [{ type: objId, ref: 'Mood' }]
-//     }
-// );
-
-//Route for saving a new record
 router.post('/', async (request, response) => {
     try {
         //Just a quick validation of the inputs, rework it later
@@ -39,29 +26,6 @@ router.post('/', async (request, response) => {
 
 });
 
-// Route for getting all records from the collection with filtering and sorting
-// Route for getting all records from the collection with filtering and sorting
-// Route for getting all records from the collection with filtering and sorting
-// Route for getting all records from the collection with filtering and sorting
-// router.get('/', async (request, response) => {
-//     try {
-//         // Extract query parameters
-//         const { filter, sort, limit } = request.query;
-//         // console.log( "filter", filter, "sort", sort, "limit", limit);
-//         // Perform the query to fetch observations with filtering and sorting
-//         const observations = await Observation.find(filter)
-//             .sort(JSON.parse(sort))
-//             .limit(limit);
-//         // console.log( "backend observations sorted = ", observations);
-//         return response.status(200).json({  
-//             count: observations.length,
-//             data: observations
-//         });
-//     } catch (error) {
-//         console.log(`Error fetching observations: ${error}`);
-//         return response.status(500).send({ message: error.message });
-//     }
-// });
 router.get('/', async (request, response) => {
     try {
         const { filter, sort, limit } = request.query;
@@ -83,7 +47,6 @@ router.get('/', async (request, response) => {
     }
 });
 
-// Route for getting all records with tray.id = id 
 router.get( '/tray:id', async ( request, response) => {
     try {
         const tid = request.params.id;
@@ -101,7 +64,6 @@ router.get( '/tray:id', async ( request, response) => {
      }
 });
 
-// Route for getting one record from collection by id
 router.get( '/:id', async ( request, response) => {
     try {
         const { id } = request.params;
@@ -115,7 +77,6 @@ router.get( '/:id', async ( request, response) => {
      }
 });
 
-// Route to update a Record
 router.put( '/:id', async ( request, response) => {
     try {
         // console.log( `Update slot request with ${JSON.stringify(request.body)}`);
@@ -133,7 +94,6 @@ router.put( '/:id', async ( request, response) => {
      }
 });
 
-// Route to delete a record with id
 router.delete( '/:id', async ( request, response) => {
     try {
         const { id } = request.params;

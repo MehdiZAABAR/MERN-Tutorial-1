@@ -36,7 +36,7 @@ const reservoirRouter = express.Router();
 CreateCRUDRoutes(reservoirRouter, Reservoir, ValidateReservoirData, 10240);
 //Generic CRUD routes for a collection defined by its mongoose Schema and Model
 const growingUnitsRouter = express.Router();
-CreateCRUDRoutes(growingUnitsRouter, GrowingUnit, ValidateGUData, 10240);
+CreateCRUDRoutes(growingUnitsRouter, GrowingUnit, ValidateGUData, 0);
 
 const newSlotsRouter = express.Router();
 CreateCRUDRoutes(newSlotsRouter, Slot, ValidateSlotData, 0);
@@ -49,7 +49,7 @@ app.get( '/', (request, response) => {
     return response.status(234).send( "Welcome to EasyHydro !");
 
 })
-app.use( '/seeds', seedsRouter);
+app.use( '/seeds', logRequests, seedsRouter);
 app.use( '/trays', traysRouter);
 app.use( '/slots', newSlotsRouter);
 app.use( '/observations', newObsRouter);

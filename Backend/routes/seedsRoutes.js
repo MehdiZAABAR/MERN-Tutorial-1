@@ -38,8 +38,9 @@ router.post('/', async (request, response) => {
 
 // Route for getting all seeds from database
 router.get( '/', async ( request, response) => {
+
     try {
-        const mseeds = await Seed.find( {});
+        const mseeds = await Seed.find( );
         return response.status(200).json(
         { 
             count: mseeds.length,

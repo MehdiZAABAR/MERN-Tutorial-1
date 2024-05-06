@@ -47,7 +47,6 @@ const CreateSeed = () => {
     axios
       .post(`${BackendURL}/seeds`, data)
       .then(() => {
-        console.log( data);
         setLoading(false);
         enqueueSnackbar( 'Seed Added to database!', { variant:'success'});
         navigate('/');

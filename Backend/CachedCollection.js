@@ -66,7 +66,7 @@ class CachedCollection {
                 .then(data => {
                     // console.log("Find returning after", this.getCollectionName().name, "db fetching query = ");
                     // Cache the retrieved data
-                    this.cache.cacheData(key, data);
+                    this.cache.addToCache(key, data);
                     return data;
                 })
                 .catch(error => {
@@ -89,7 +89,7 @@ class CachedCollection {
             return this.cache.Model.findById(id)
                 .then(data => {
                     // Cache the retrieved data
-                    this.cache.cacheData(id, data);
+                    this.cache.addToCache(id, data);
                     return data;
                 })
                 .catch(error => {
@@ -100,12 +100,12 @@ class CachedCollection {
         }
     }
     findByIdAndUpdate(id, update) {
-        console.log( "Entering CachecCollection findById method");
+        console.log( "Entering CachedCollection findById method");
         // First, update the data in the database
         return this.cache.Model.findByIdAndUpdate(id, update, { new: true })
             .then(updatedData => {
                 // Update the cache with the new data
-                this.cache.updateRecord(id, updatedData);
+                // this.cache.updateRecord(id, updatedData);
                 return updatedData;
             })
             .catch(error => {

@@ -40,11 +40,6 @@ const SlotComponent = ({ slots, selectedSlots, containerType, containerId, rowIn
   else
     collectionURL = 'undefCollection'
 
-
-
-  //  console.log( `selectedSlots = ${JSON.stringify(selectedSlots)} \
-  //  containerId = ${containerId} rowIndex ${rowIndex} colIndex ${colIndex}`, {variant:'Success'});
-
   useEffect(() => {
     // Find the slot corresponding to the given row and column indices
     const foundSlot = Array.isArray(slots) && slots.find(slot =>
@@ -166,6 +161,21 @@ const MoodBgColor = (mood) => {
     borderRadius: '5px',
   };
 
+
+  const UpdateTrayView = async () =>
+  {
+    try {
+      const updatedSlots = slots.filter(s => s._id !== slot._id);
+    // console.log(`Updated Slots = ${JSON.stringify(updatedSlots)}`);
+    slots = updatedSlots;
+    const updatedTray = await axios.get(`${BackendURL}/${collectionURL}/${containerId}`);
+    onContainerUpdate(updatedTray.data, slots);
+    } catch (error) {
+      console.log( "Something went wrong for container id ", containerId);
+    }
+    setLoading(false);
+
+  }
 
   const DeleteSlots = async (containerid, selectedSlots) => {
     //  console.log(`selectedSlots to delete = ${JSON.stringify(selectedSlots)}`);
@@ -301,7 +311,7 @@ const MoodBgColor = (mood) => {
                 <AiOutlineDelete className='text-2xl text-black hover:text-red-400' onClick={HandleDeleteManyPlants} />
               </div>
               <div title="Transfer Slot">
-                <TbTransferOut className='text-2xl text-black hover:text-green-600' onClick={() => { showModalContent(<TransferForm slot={slot} slotId = {slot._id} containerId={containerId} containerType = 'Tray' seed={seed} onClose={() => { setShowModal(false) }}/>); }} />
+                <TbTransferOut className='text-2xl text-black hover:text-green-600' onClick={() => { showModalContent(<TransferForm slot={slot} slotId = {slot._id} containerId={containerId} containerType = 'Tray' seed={seed} onClose={(update) => { setShowModal(false); if(update) UpdateTrayView()}}/>); }} />
               </div>
               <div title="Observations">
                 <MdLocalSee className='text-2xl text-black hover:text-white' onClick={() => { showModalContent(<ObservationsLogForm slot={slot} seed={seed} />); }} />

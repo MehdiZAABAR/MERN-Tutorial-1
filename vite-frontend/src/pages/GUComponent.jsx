@@ -25,6 +25,7 @@ const ContainerComponent = ( containerType) => {
   }, [id, appGrowingUnits]);
 
   const fetchData = async () => {
+    let fieldName = 'seedlingTray';
     try {
         // console.log( "looking for container id", id);
         if( !appGrowingUnits || appGrowingUnits.length ===0 )
@@ -34,8 +35,15 @@ const ContainerComponent = ( containerType) => {
         if( !mContainer)
             return;
       setContainer( mContainer);
+      if( containerType === 'Tray')
+        fieldName = 'seedlingTray';
+      else
+        fieldName = 'growingSystem'
       // Fetch slots data belonging to the container
-      const slotsResponse = await axios.get(`${BackendURL}/slots/growingunit/${id}`);
+      const slotsResponse = await axios.get(`${BackendURL}/slots`, {
+        params: {
+          filter: {[fieldName]: { '$eq': id }}
+        }});
       setSlots(slotsResponse.data.data);
       // Set cell size based on tray size
       setCellSize( mContainer.slotSize === 'big' ? '200px' : mContainer.slotSize === 'medium' ? '150px' : '100px');

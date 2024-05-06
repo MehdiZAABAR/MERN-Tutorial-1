@@ -66,10 +66,10 @@ const Stats = () => {
 
             if (selectedTray._id === '0') // AllTrays
             {
-                trayStats = await ComputeStatsSeedsInTrays({ _id: '0', nbRows: 1, nbCols: 1 }, appSeeds);
+                trayStats = await ComputeStatsSeedsInTrays('Tray', { _id: '0', nbRows: 1, nbCols: 1 }, appSeeds);
             }
             else
-                trayStats = await ComputeStatsSeedsInTrays(appTrays?.find(tray => tray._id === selectedTray._id), appSeeds);
+                trayStats = await ComputeStatsSeedsInTrays('Tray', appTrays?.find(tray => tray._id === selectedTray._id), appSeeds);
             // console.log(`tray ${selectedTray.easyName} stats`, trayStats);
             const { backgroundColors, borderColors } = GenerateColors(trayStats.traySeeds?.length);
 
@@ -85,7 +85,7 @@ const Stats = () => {
             });
             //let chSz = Math.min(1 + Math.ceil((trayStats.traySeeds?.length || 0) / 8), 3);
             let chSz = Math.min(3 + Math.ceil((trayStats.traySeeds?.length || 0) / 14), 12);
-            setCharSize(`w-${chSz}/12`);
+            setCharSize(`w-${chSz}/6`);
         })();
 
     }, [selectedTray, appTrays, appSeeds]);
@@ -113,7 +113,7 @@ const Stats = () => {
                     </select>
                 </div>
             </div>
-            {/* <div className={`flex justify-center mt-4 ${chartSize}`}> */}
+            <div className={`flex justify-center mt-4 ${chartSize}`}>
                  <h2 className="text-center">Seeds Usage for {selectedTray ? selectedTray.easyName : 'All Trays'} {chartSize}</h2> 
 
                 <div className={`mt-4 ${chartSize}`}>
@@ -169,7 +169,7 @@ const Stats = () => {
                         />
                     )}
                 </div>
-            {/* </div> */}
+             </div> 
         </>
     );
 }

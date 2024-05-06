@@ -57,7 +57,6 @@ const EditTray = () => {
     axios
       .put(`${BackendURL}/trays/${id}`, data)
       .then(() => {
-        console.log( data);
         setLoading(false);
         enqueueSnackbar( 'Record updated successfully !', { variant: 'success'});
         navigate('/');

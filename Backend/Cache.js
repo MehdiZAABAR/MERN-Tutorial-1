@@ -15,7 +15,7 @@ class Cache {
         }
         this.cache.set(key, value);
         this.memoryUsage += sizeOfValue;
-        console.log("in addToCache after adding Cache size:", this.memoryUsage);
+        // console.log("in addToCache after adding Cache size:", this.memoryUsage);
     }
     
     removeFromCache(key) {
@@ -37,6 +37,7 @@ class Cache {
     }
 
     updateCache(key, value) {
+        console.log( "upate Cahhe", key, value);
         this.removeFromCache(key);
         this.addToCache(key, value);
     }
@@ -81,10 +82,6 @@ class Cache {
             console.log("getCachedData No data in cache for key", key);
         }
         return null;
-    }
-    cacheData(key, data) {
-        // console.log("caching data ", data, "with key ", key);
-        this.addToCache(key, data);
     }
     updateRecord(recordId, updatedData) {
         for (const [key, value] of this.cache.entries()) {
